@@ -1,0 +1,83 @@
+/* General styles for the navbar container */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000000; /* Green background */
+    color: #4caf50;
+    padding: 10px 20px;
+    border-bottom: 1px solid black;
+    min-height: 75px;
+  }
+  
+  /* Logo styling */
+  .logo {
+    font-size: 30px;
+    font-weight: bold;
+    color: #4caf50;
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  /* Tabs styling */
+  .tabs {
+    display: flex;
+    gap: 20px; /* Space between tabs */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 25px;
+  }
+  
+  .tabs li {
+    cursor: pointer;
+    color: #4caf50;
+    font-size: 14px;
+    padding: 10px 0;
+    transition: color 0.3s ease-in-out;
+    padding-right: 20px;
+  }
+
+  .tabs li {
+    border-right: 1px solid #4caf50; /* Divider between tabs */
+  }
+  .tabs li:last-child {
+    border-right: none; /* Remove the divider on the last tab */
+  }
+  
+  
+  .tabs li:hover {
+    color: white;
+   text-decoration: underline;
+  }
+  
+  /* Sign-in button styling */
+  .signin button {
+    background-color: #4caf50;
+    font-size: 16px;
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+  
+  .signin button:hover {
+    background-color: #fff; /* Darker green on hover */
+    color: #000;
+  }
+  
+  @media (max-width: 768px) {
+    .tabs {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px; /* Compact spacing */
+    }
+
+    .signin button {
+        align-self: flex-start; /* Align with other items */
+    }
+}

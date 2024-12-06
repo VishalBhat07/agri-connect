@@ -1,0 +1,67 @@
+/* General styles for the footer */
+.footer {
+    background-color: #000000; /* Match navbar background */
+    color: #4caf50; /* Green accents */
+    padding: 20px;
+    border-top: 1px solid #4caf50;
+  }
+  
+  /* Footer content styling */
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  /* Footer section styling */
+  .footer-section {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .footer-section h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #ffffff; /* White section headers */
+  }
+  
+  .footer-section p,
+  .footer-section ul {
+    font-size: 15px;
+    margin: 10px 0;
+    color: #4caf50;
+  }
+  
+  .footer-section ul {
+    list-style: none;
+  }
+  
+  .footer-section ul li {
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-section ul li:hover {
+    color: #d4ffd6; /* Light green on hover */
+  }
+  
+  /* Footer bottom bar */
+  .footer-bottom {
+    text-align: center;
+    font-size: 14px;
+    border-top: 1px solid #4caf50;
+    padding-top: 10px;
+    color: #4caf50;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  
