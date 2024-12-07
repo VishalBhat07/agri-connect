@@ -1,14 +1,18 @@
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
-import Component from "./components/Footer/Footer";
+import Footer from "./components/Footer/Footer";
+import Home from "./pages/Home/Home";
 import { Button } from "flowbite-react";
 
 function App() {
   return (
     <>
       <Navbar />
-      <div style={{ minHeight: "100vh" }}></div>
-      <Component />
+      
+      <Home />
+
+
+      <Footer />
     </>
   );
 }

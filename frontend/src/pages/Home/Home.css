@@ -1,0 +1,160 @@
+/* Home container */
+.home {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    background-color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    --left-background: #ffffff;
+    --right-background: #f6f6f6;
+}
+.home.dark{
+    --left-background: #333;
+    --right-background: #444;
+}
+/* Left section */
+.home-left-section {
+    height: 100%;
+    width: 60%;
+    background-color: var(--left-background);
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center content horizontally */
+    justify-content: space-evenly; /* Distribute items evenly */
+    padding: 2rem; /* Optional: Adds some padding around the section */
+}
+
+/* Title, Info, and About sections inside the Left section */
+.home-left-title,
+.home-left-info,
+.home-left-about {
+    width: 100%; /* Make sure they occupy the full width */
+}
+
+
+.home-left-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666666;
+    margin-bottom: 1rem;
+}
+
+.home-left-info {
+    margin-bottom: 2rem;
+}
+
+.home-left-info-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+}
+
+.home-left-info-features button {
+    margin-right: 1rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #000000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.home-left-info-features button:nth-child(2) {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.home-left-info-features button:hover {
+    opacity: 0.8;
+}
+
+.home-left-about {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #666666;
+}
+
+/* Right section */
+.home-right-section {
+    height: 100%;
+    width: 40%;
+    padding: 2rem;
+    background-color: var(--right-background);
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: stretch; /* Ensures children occupy full width */
+    justify-content: space-around; /* Distribute items evenly with space between them */
+}
+
+
+.home-right-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-right-profile img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #dddddd; /* Placeholder for image */
+}
+
+.home-right-features {
+    text-align: left;
+    width: 100%; /* Ensures the feature list spans the section's width */
+}
+
+.home-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%; /* Full width of the right section */
+}
+
+.feature {
+    font-weight: 500;
+    color: #000000;
+    padding: 1rem; /* Adds separation between list items */
+    border-bottom: 1px solid #dddddd; /* Creates separation */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Aligns text and optional arrows or icons */
+}
+
+.feature:last-child {
+    border-bottom: none; /* Removes bottom border from the last item */
+}
+
+.feature::after {
+    content: '>';
+    font-weight: bold;
+    color: #666666;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    /* Home container */
+    .home {
+        flex-direction: column; /* Stack left and right sections vertically */
+        height: auto; /* Allow height to adjust based on content */
+    }
+
+    /* Left section */
+    .home-left-section {
+        width: 100%; /* Take full width */
+        height: auto; /* Allow height to adjust based on content */
+    }
+
+    /* Right section */
+    .home-right-section {
+        width: 100%; /* Take full width */
+        height: auto; /* Allow height to adjust based on content */
+    }
+}
+
