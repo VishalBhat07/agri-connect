@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <div className="footer">
       <div className="footer-content">
-        <div className="footer-section">
+        <div className="footer-section" style={{ width: "500px" }}>
           <h4>Agri Connect</h4>
           <p>
             Agri Connect is dedicated to connecting farmers, learners, and
@@ -24,8 +24,17 @@ const Footer = () => {
         </div>
         <div className="footer-section">
           <h4>Contact</h4>
-          <p>Email: vishalkbhat@agriconnect.com</p>
-          <p>Phone: +91 7975806665</p>
+          <p>
+            <a href="mailto:vishalkbhat@agriconnect.com">
+              vishalkbhat@agriconnect.com
+            </a>
+          </p>
+          <p>
+            <a href="mailto:vishalkbhat@agriconnect.com">
+              vssreenivaas@agriconnect.com
+            </a>
+          </p>
+          <p>+91 7975806665</p>
         </div>
       </div>
       <div className="footer-bottom">
