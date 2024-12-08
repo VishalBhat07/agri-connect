@@ -16,10 +16,9 @@ const Navbar = () => {
         <div className="tabs">
           <li>Market Place</li>
           <li>Learning Resources</li>
-          <li>Learning Resources</li>
           <li>Government Schemes</li>
           <li>About us</li>
-          <li>Contact</li>
+          <li>Contact us</li>
         </div>
         <div className="signin">
           <button>Sign in</button>

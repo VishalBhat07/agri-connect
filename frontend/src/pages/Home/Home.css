@@ -87,7 +87,7 @@
     display: flex;
     flex-direction: column; /* Stack children vertically */
     align-items: stretch; /* Ensures children occupy full width */
-    justify-content: space-around; /* Distribute items evenly with space between them */
+    justify-content: space-evenly; /* Distribute items evenly with space between them */
 }
 
 
@@ -98,8 +98,8 @@
 }
 
 .home-right-profile img {
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     border-radius: 50%;
     object-fit: cover;
     background-color: #dddddd; /* Placeholder for image */
