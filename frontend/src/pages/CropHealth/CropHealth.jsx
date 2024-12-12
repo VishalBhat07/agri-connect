@@ -1,14 +1,18 @@
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ClipLoader } from "react-spinners";
 import {
   faUpload,
-  faComment,
   faPaperPlane,
+  faLeaf,
+  faSeedling,
+  faCommentDots,
+  faLightbulb,
+  faSun,
 } from "@fortawesome/free-solid-svg-icons";
 import ReactMarkdown from "react-markdown";
-import "./CropHealth.css"
+import "./CropHealth.css";
 
 const CropHealth = () => {
   const [image, setImage] = useState(null);
@@ -19,7 +23,6 @@ const CropHealth = () => {
   const chatLogRef = useRef(null);
 
   useEffect(() => {
-    // Scroll to the bottom of the chat log whenever it updates
     if (chatLogRef.current) {
       chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
     }
@@ -48,14 +51,13 @@ const CropHealth = () => {
     setImage(file);
   };
 
-  // Function to analyze image using the backend API
   const analyzeImage = async () => {
     if (!image) {
       alert("No image selected. Please upload an image.");
       return;
     }
     setLoading(true);
-    setImageLoading(true); // Start image loading state
+    setImageLoading(true);
 
     const formData = new FormData();
     formData.append("image", image);
@@ -72,12 +74,11 @@ const CropHealth = () => {
       );
 
       const result = response?.data?.caption;
-      console.log(result);
       setLoading(false);
-      setImageLoading(false); // Stop image loading state
+      setImageLoading(false);
 
       setChatLog((prevLog) => [...prevLog, { user: "Bot", text: result }]);
-      setImage(null); // Reset the image after processing
+      setImage(null);
     } catch (error) {
       console.error("Error analyzing the image:", error);
       alert("There was an error analyzing the image. Please try again.");
@@ -86,9 +87,8 @@ const CropHealth = () => {
     }
   };
 
-  // Function to send text message to the chatbot API
   const sendMessage = async () => {
-    if (!message) {
+    if (!message.trim()) {
       alert("Please enter a message.");
       return;
     }
@@ -97,17 +97,15 @@ const CropHealth = () => {
     try {
       const response = await axios.post(
         "http://localhost:3000/api/chat",
-        { message: message }, // Send the message as part of the request body
+        { message: message },
         {
           headers: {
-            "Content-Type": "application/json", // Make sure this is application/json
+            "Content-Type": "application/json",
           },
         }
       );
 
       const responseText = response?.data?.response;
-      console.log(responseText);
-
       setLoading(false);
 
       setChatLog((prevLog) => [
@@ -115,7 +113,7 @@ const CropHealth = () => {
         { user: "You", text: message },
         { user: "Bot", text: responseText },
       ]);
-      setMessage(""); // Clear the message input after sending
+      setMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
       alert("There was an error with the chatbot. Please try again.");
@@ -123,82 +121,146 @@ const CropHealth = () => {
     }
   };
 
+  const dummyPrompts = [
+    "What is the health of my plant?",
+    "Can you help me with plant diseases?",
+    "How to improve plant growth?",
+  ];
+
   return (
-  <div className="h-screen flex flex-col bg-gray-200">
-    {/* Header */}
-    <div className="w-full bg-[#4caf50] p-4 shadow-lg text-center text-white text-3xl font-bold">
-      <FontAwesomeIcon icon={faComment} className="mr-2" />
-      Plant Health Assistant
-    </div>
+    <div className="h-screen w-full flex flex-col bg-gradient-to-br from-green-100 to-green-500">
+      {/* Main Content */}
+      <main className="flex-grow w-full px-4 py-6 flex flex-col">
+        <div className="w-full max-w-full mx-auto bg-white rounded-xl shadow-xl flex flex-col h-full overflow-hidden">
+          {/* Chat Log */}
+          <div
+            ref={chatLogRef}
+            className="flex-grow overflow-y-auto p-6 bg-gray-50 border-b border-gray-200"
+          >
+            {chatLog.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <div className="mb-8 flex items-center justify-center w-32 h-32 bg-green-100 rounded-full shadow-lg">
+                  <FontAwesomeIcon
+                    icon={faSeedling}
+                    className="text-6xl text-green-600 animate-pulse"
+                  />
+                </div>
 
-    {/* Content */}
-    <div className="flex-grow">
-      {/* Chat and Upload Section */}
-      <div className="flex flex-col flex-grow bg-white shadow-md rounded-lg p-4">
-        {/* Chat Log */}
-        <div ref={chatLogRef} className="h-[80vh] overflow-y-auto border border-gray-300 rounded-md mb-4 p-3 bg-gray-50">
-          {chatLog.map((entry, index) => (
-            <div
-              key={index}
-              className={`chat-message mb-2 p-2 rounded-lg ${
-                entry.user === "You"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-gray-200 text-gray-800"
-              }`}
+                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                  <FontAwesomeIcon
+                    icon={faCommentDots}
+                    className="mr-3 text-green-600"
+                  />
+                  Welcome to Plant Health Assistant
+                </h2>
+
+                <p className="text-lg text-gray-600 mb-6 max-w-md">
+                  Got plant questions? I'm here to help! Upload an image or ask
+                  about plant health.
+                </p>
+
+                <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto">
+                  {dummyPrompts.map((prompt, index) => (
+                    <div
+                      key={index}
+                      className="bg-white border border-green-200 rounded-lg p-3 
+                     hover:bg-green-50 transition-all duration-300 
+                     flex items-center justify-center space-x-2 
+                     cursor-pointer group"
+                    >
+                      <FontAwesomeIcon
+                        icon={
+                          index === 0
+                            ? faLeaf
+                            : index === 1
+                            ? faLightbulb
+                            : faSun
+                        }
+                        className="text-green-500 group-hover:text-green-700 transition-colors"
+                      />
+                      <span className="text-sm text-gray-700 group-hover:text-green-800">
+                        {prompt}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              chatLog.map((entry, index) => (
+                <div
+                  key={index}
+                  className={`chat-message mb-4 p-3 rounded-lg shadow-sm max-w-xl mx-auto 
+                    ${
+                      entry.user === "You"
+                        ? "bg-green-100 text-green-900 self-end"
+                        : "bg-gray-200 text-gray-900 self-start"
+                    }`}
+                >
+                  <div className="flex items-center mb-2">
+                    <FontAwesomeIcon
+                      icon={entry.user === "You" ? faSeedling : faLeaf}
+                      className={`mr-2 ${
+                        entry.user === "You"
+                          ? "text-green-600"
+                          : "text-gray-600"
+                      }`}
+                    />
+                    <strong className="font-semibold">{entry.user}</strong>
+                  </div>
+                  <ReactMarkdown>{entry.text}</ReactMarkdown>
+                </div>
+              ))
+            )}
+
+            {loading && (
+              <div className="flex justify-center items-center mt-4">
+                <ClipLoader size={40} color="#10B981" loading={loading} />
+              </div>
+            )}
+          </div>
+
+          {/* Input Section */}
+          <div className="flex items-center gap-3 p-4 bg-white border-t border-gray-200">
+            <label
+              htmlFor="image-upload"
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md cursor-pointer hover:bg-green-700 transition"
             >
-              <strong className="block mb-1">{entry.user}:</strong>
-              <ReactMarkdown>{entry.text}</ReactMarkdown>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex justify-center items-center mt-4">
-              <ClipLoader size={40} color="#00BFAE" loading={loading} />
-            </div>
-          )}
-        </div>
-
-        {/* Input and Upload */}
-        <div className="flex items-center space-x-2">
-          <label
-            htmlFor="image-upload"
-            className="flex items-center px-4 py-2 bg-black text-white rounded-md cursor-pointer hover:bg-green-600 transition"
-          >
-            <FontAwesomeIcon icon={faUpload} className="mr-2" />
-            {image ? image.name : "Upload Image"}
+              <FontAwesomeIcon icon={faUpload} className="mr-2" />
+              {image ? image.name : "Upload Image"}
+              <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+            </label>
             <input
-              id="image-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageUpload}
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Ask something about plant health..."
+              className="flex-grow px-3 py-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              onKeyPress={(e) => e.key === "Enter" && sendMessage()}
             />
-          </label>
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Ask something about plant health..."
-            className="flex-grow px-3 py-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-          />
-          <button
-            onClick={analyzeImage}
-            className="px-4 py-2 bg-black text-white rounded-md hover:bg-green-600 transition disabled:opacity-50"
-            disabled={!image || imageLoading}
-          >
-            Analyze
-          </button>
-          <button
-            onClick={sendMessage}
-            className="bg-black text-white px-4 py-2 rounded-md hover:bg-green-600 transition flex items-center"
-          >
-            <FontAwesomeIcon icon={faPaperPlane} className="mr-2" /> Send
-          </button>
+            <button
+              onClick={analyzeImage}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition disabled:opacity-50"
+              disabled={!image || imageLoading}
+            >
+              Analyze
+            </button>
+            <button
+              onClick={sendMessage}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition flex items-center"
+            >
+              <FontAwesomeIcon icon={faPaperPlane} className="mr-2" /> Send
+            </button>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
-  </div>
-);
-
+  );
 };
 
 export default CropHealth;
