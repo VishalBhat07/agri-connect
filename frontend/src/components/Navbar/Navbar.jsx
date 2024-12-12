@@ -15,6 +15,7 @@ const Navbar = () => {
         </div>
         <div className="tabs">
           <li>Market Place</li>
+          <li onClick={() => navigate("/crophealth")}>Crop Health</li>
           <li>Learning Resources</li>
           <li>Government Schemes</li>
           <li>About us</li>
