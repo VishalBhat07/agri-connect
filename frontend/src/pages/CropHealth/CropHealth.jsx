@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ClipLoader } from "react-spinners";
@@ -8,6 +8,7 @@ import {
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import ReactMarkdown from "react-markdown";
+import "./CropHealth.css"
 
 const CropHealth = () => {
   const [image, setImage] = useState(null);
@@ -15,6 +16,14 @@ const CropHealth = () => {
   const [chatLog, setChatLog] = useState([]);
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
+  const chatLogRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll to the bottom of the chat log whenever it updates
+    if (chatLogRef.current) {
+      chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+    }
+  }, [chatLog]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -115,67 +124,55 @@ const CropHealth = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-500">
-      <div className="max-w-2xl w-full p-6 bg-white text-gray-800 shadow-2xl rounded-xl">
-        <div className="flex items-center justify-center mb-6">
-          <FontAwesomeIcon
-            icon={faComment}
-            className="text-teal-500 mr-3"
-            size="2x"
-          />
-          <h1 className="text-3xl font-bold text-teal-600">
-            Plant Health Assistant
-          </h1>
+  <div className="h-screen flex flex-col bg-gray-200">
+    {/* Header */}
+    <div className="w-full bg-[#4caf50] p-4 shadow-lg text-center text-white text-3xl font-bold">
+      <FontAwesomeIcon icon={faComment} className="mr-2" />
+      Plant Health Assistant
+    </div>
+
+    {/* Content */}
+    <div className="flex-grow">
+      {/* Chat and Upload Section */}
+      <div className="flex flex-col flex-grow bg-white shadow-md rounded-lg p-4">
+        {/* Chat Log */}
+        <div ref={chatLogRef} className="h-[80vh] overflow-y-auto border border-gray-300 rounded-md mb-4 p-3 bg-gray-50">
+          {chatLog.map((entry, index) => (
+            <div
+              key={index}
+              className={`chat-message mb-2 p-2 rounded-lg ${
+                entry.user === "You"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              <strong className="block mb-1">{entry.user}:</strong>
+              <ReactMarkdown>{entry.text}</ReactMarkdown>
+            </div>
+          ))}
+          {loading && (
+            <div className="flex justify-center items-center mt-4">
+              <ClipLoader size={40} color="#00BFAE" loading={loading} />
+            </div>
+          )}
         </div>
 
-        <div className="bg-gray-100 p-4 rounded-lg mb-6">
-          <div className="flex items-center space-x-4 mb-4">
-            <label
-              htmlFor="image-upload"
-              className="flex items-center px-4 py-2 bg-teal-500 text-white rounded-md cursor-pointer hover:bg-teal-400 transition"
-            >
-              <FontAwesomeIcon icon={faUpload} className="mr-2" />
-              {image ? image.name : "Upload Image"}
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-            </label>
-            <button
-              onClick={analyzeImage}
-              className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-500 transition disabled:opacity-50"
-              disabled={!image || imageLoading}
-            >
-              {imageLoading ? "Processing Image..." : "Analyze Image"}
-            </button>
-          </div>
-
-          <div className="chat-log h-64 overflow-y-auto border border-gray-300 rounded-md p-3 bg-gray-50">
-            {chatLog.map((entry, index) => (
-              <div
-                key={index}
-                className={`mb-2 p-2 rounded-lg ${
-                  entry.user === "You"
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-gray-200 text-gray-800"
-                }`}
-              >
-                <strong className="block mb-1">{entry.user}:</strong>
-                <ReactMarkdown>{entry.text}</ReactMarkdown>
-              </div>
-            ))}
-            {loading && (
-              <div className="flex justify-center items-center mt-4">
-                <ClipLoader size={40} color="#00BFAE" loading={loading} />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="flex space-x-2">
+        {/* Input and Upload */}
+        <div className="flex items-center space-x-2">
+          <label
+            htmlFor="image-upload"
+            className="flex items-center px-4 py-2 bg-black text-white rounded-md cursor-pointer hover:bg-green-600 transition"
+          >
+            <FontAwesomeIcon icon={faUpload} className="mr-2" />
+            {image ? image.name : "Upload Image"}
+            <input
+              id="image-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+          </label>
           <input
             type="text"
             value={message}
@@ -184,15 +181,24 @@ const CropHealth = () => {
             className="flex-grow px-3 py-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
           <button
+            onClick={analyzeImage}
+            className="px-4 py-2 bg-black text-white rounded-md hover:bg-green-600 transition disabled:opacity-50"
+            disabled={!image || imageLoading}
+          >
+            Analyze
+          </button>
+          <button
             onClick={sendMessage}
-            className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-400 transition flex items-center"
+            className="bg-black text-white px-4 py-2 rounded-md hover:bg-green-600 transition flex items-center"
           >
             <FontAwesomeIcon icon={faPaperPlane} className="mr-2" /> Send
           </button>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default CropHealth;
