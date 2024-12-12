@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <div style={{ minHeight: "100vh" }}>
+      <div>
         <Routes>
           <Route path={"/"} element={<Home />} />
           <Route path={"/crophealth"} element={<CropHealth />} />
