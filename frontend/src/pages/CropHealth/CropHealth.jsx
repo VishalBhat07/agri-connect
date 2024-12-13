@@ -21,6 +21,7 @@ const CropHealth = () => {
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const chatLogRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (chatLogRef.current) {
@@ -79,6 +80,9 @@ const CropHealth = () => {
 
       setChatLog((prevLog) => [...prevLog, { user: "Bot", text: result }]);
       setImage(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Reset the file input
+      }
     } catch (error) {
       console.error("Error analyzing the image:", error);
       alert("There was an error analyzing the image. Please try again.");
@@ -228,6 +232,7 @@ const CropHealth = () => {
               <FontAwesomeIcon icon={faUpload} className="mr-2" />
               {image ? image.name : "Upload Image"}
               <input
+                ref={fileInputRef}
                 id="image-upload"
                 type="file"
                 accept="image/*"
