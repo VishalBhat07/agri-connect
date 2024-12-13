@@ -11,15 +11,15 @@ const Navbar = () => {
       <div className="navbar">
         <div className="logo" onClick={() => navigate("/")}>
           <img src={logo} alt="" />
-          <div className="logo-text">Agri Connect</div>
+          <div className="logo-text">AgriConnect</div>
         </div>
         <div className="tabs">
           <li>Market Place</li>
           <li onClick={() => navigate("/crophealth")}>Crop Health</li>
           <li>Learning Resources</li>
           <li>Government Schemes</li>
-          <li>About us</li>
-          <li>Contact us</li>
+          <li onClick={() => navigate("/about")}>About us</li>
+          <li onClick={() => navigate("/contact")}>Contact us</li>
         </div>
         <div className="signin">
           <button>Sign in</button>
