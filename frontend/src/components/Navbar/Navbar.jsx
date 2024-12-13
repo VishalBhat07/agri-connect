@@ -11,7 +11,7 @@ const Navbar = () => {
       <div className="navbar">
         <div className="logo" onClick={() => navigate("/")}>
           <img src={logo} alt="" />
-          <strong>Agri Connect</strong>
+          <div className="logo-text">Agri Connect</div>
         </div>
         <div className="tabs">
           <li>Market Place</li>

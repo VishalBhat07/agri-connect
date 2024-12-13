@@ -130,12 +130,12 @@ const CropHealth = () => {
   return (
     <div className="w-full flex flex-col bg-gradient-to-br from-green-100 to-green-500">
       {/* Main Content */}
-      <main className="min-h-[80vh] w-full px-4 py-6 flex flex-col">
+      <main className="min-h-[87vh] w-full px-4 py-6 flex flex-col">
         <div className="w-full max-w-full mx-auto bg-white rounded-xl shadow-xl flex flex-col h-full overflow-hidden">
           {/* Chat Log */}
           <div
             ref={chatLogRef}
-            className="h-[65vh] flex-grow overflow-y-auto p-6 bg-gray-50 border-b border-gray-200"
+            className="min-h-[75vh] flex-grow overflow-y-auto p-28 bg-gray-50 border-b border-gray-200"
           >
             {chatLog.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">

@@ -11,7 +11,7 @@
   }
   
   /* Logo styling */
-  .logo {
+  /* .logo {
     font-size: 30px;
     font-weight: bold;
     color: #fff;
@@ -21,7 +21,33 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
-  }
+  } */
+
+  /* Styling for the logo container */
+.logo {
+  font-size: 30px;
+  font-weight: bold;
+  color: #fff;
+  padding: 5px 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Styling for the logo text filled with an image */
+.logo-text {
+  font-size: 45px; /* Adjust text size */
+  font-weight: bold;
+  background-image: url("../../assets/plantbg.avif"); /* Replace with your image path */
+  background-size: cover; /* Ensure the image covers the text */
+  background-clip: text; /* Clip the image to the text */
+  -webkit-background-clip: text; /* For WebKit browsers */
+  color: transparent; /* Makes the text background visible */
+  -webkit-text-fill-color: transparent; /* For better cross-browser support */
+}
+
   
   /* Tabs styling */
   .tabs {
@@ -36,7 +62,7 @@
   .tabs li {
     cursor: pointer;
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
     padding: 10px 0;
     transition: color 0.3s ease-in-out;
     padding-right: 20px;
@@ -69,6 +95,8 @@
   
   .signin button:hover {
     scale: 1.1;
+    color: #fff;
+    background-color: rgb(14 159 110 / var(--tw-bg-opacity, 1));
   }
   
   @media (max-width: 768px) {

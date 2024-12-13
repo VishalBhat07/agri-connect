@@ -1,15 +1,22 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSeedling, faLightbulb, faSun, faLeaf, faPaperPlane, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSeedling,
+  faLightbulb,
+  faSun,
+  faLeaf,
+  faPaperPlane,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Left() {
   return (
-    <div className="flex flex-col justify-center p-8 bg-green-100 w-full h-full mx-auto">
-      <div className="text-4xl font-extrabold text-gray-800 mb-4">
+    <div className="flex flex-col justify-center p-8 bg-green-100 w-full min-h-[90vh] mx-auto">
+      <div className="text-4xl font-extrabold text-gray-800 mb-5">
         AgriConnect: Empowering Farmers
       </div>
       <div className="mb-6">
-        <div className="text-2xl font-semibold text-gray-800 mb-3">
+        <div className="text-2xl font-semibold text-gray-800 mb-4">
           Farming Made Easier
         </div>
         <div className="flex gap-6">
@@ -28,7 +35,9 @@ function Left() {
         </div>
       </div>
       <div className="text-lg text-gray-800 leading-relaxed">
-        AgriConnect is here to support farmers with crop sales, modern farming techniques, weather updates, and more. Empowering the agricultural community, one farmer at a time.
+        AgriConnect is here to support farmers with crop sales, modern farming
+        techniques, weather updates, and more. Empowering the agricultural
+        community, one farmer at a time.
       </div>
     </div>
   );
@@ -36,14 +45,17 @@ function Left() {
 
 function Right() {
   return (
-    <div className="flex flex-col items-center justify-around p-8 bg-green-500 w-full h-full">
+    <div className="flex flex-col items-center justify-around p-8 bg-green-500 w-full min-h-[90vh]">
+      {/* Plant Logo */}
       <div className="mb-6">
-        <img
-          src="/pfp.jpg"
-          alt="farmer profile"
-          className="rounded-full w-32 h-32 object-cover shadow-md border-4 border-white"
-        />
+        <div className="flex items-center justify-center w-32 h-32 bg-green-100 rounded-full shadow-lg animate-pulse">
+          <FontAwesomeIcon
+            icon={faSeedling}
+            className="text-6xl text-green-600"
+          />
+        </div>
       </div>
+
       <div className="w-full max-w-lg">
         <ul className="space-y-4 text-xl text-white">
           {[
@@ -51,7 +63,10 @@ function Right() {
             { icon: faLightbulb, text: "Learn modern farming techniques" },
             { icon: faSun, text: "Access real-time weather updates" },
             { icon: faLeaf, text: "Analyze crop price trends" },
-            { icon: faPaperPlane, text: "Get notified about government schemes" },
+            {
+              icon: faPaperPlane,
+              text: "Get notified about government schemes",
+            },
           ].map((feature, index) => (
             <li
               key={index}
