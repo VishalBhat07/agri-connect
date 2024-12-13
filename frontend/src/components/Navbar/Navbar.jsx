@@ -17,7 +17,7 @@ const Navbar = () => {
           <li>Market Place</li>
           <li onClick={() => navigate("/crophealth")}>Crop Health</li>
           <li>Learning Resources</li>
-          <li>Government Schemes</li>
+          <li onClick={() => navigate("/schemes")}>Government Schemes</li>
           <li onClick={() => navigate("/about")}>About us</li>
           <li onClick={() => navigate("/contact")}>Contact us</li>
         </div>

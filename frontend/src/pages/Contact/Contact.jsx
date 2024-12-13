@@ -134,7 +134,7 @@ function Right() {
         </div>
       </div>
       <div className="w-full max-w-lg">
-        <ul className="space-y-4 text-xl text-white">
+        <ul className="space-y-4 text-3xl text-white">
           {contactInfo.map((contact, index) => (
             <li
               key={index}
