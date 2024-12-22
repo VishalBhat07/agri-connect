@@ -13,6 +13,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.1",
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@radix-ui/react-select": "^2.1.4",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "flowbite": "^2.5.2",

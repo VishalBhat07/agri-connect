@@ -7,6 +7,7 @@ import CropHealth from "./pages/CropHealth/CropHealth";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Schemes from "./pages/Schemes/Schemes";
+import PricePredictor from "./pages/Prediction/Predictor";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path={"/about"} element={<About />} />
           <Route path={"/contact"} element={<Contact />} />
           <Route path={"/schemes"} element={<Schemes />} />
+          <Route path={"/test"} element={<PricePredictor />} />
           {/* <Route path={"/login"} element={<Login />} /> */}
         </Routes>
       </div>

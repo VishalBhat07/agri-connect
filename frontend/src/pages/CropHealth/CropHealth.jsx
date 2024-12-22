@@ -142,7 +142,7 @@ const CropHealth = () => {
             className="min-h-[75vh] flex-grow overflow-y-auto bg-gray-50 border-b border-gray-200 p-4"
           >
             {chatLog.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
+              <div className="flex flex-col items-center justify-center h-full text-center pt-20">
                 <div className="mb-8 flex items-center justify-center w-32 h-32 bg-green-100 rounded-full shadow-lg">
                   <FontAwesomeIcon
                     icon={faSeedling}
