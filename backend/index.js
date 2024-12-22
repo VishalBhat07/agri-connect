@@ -8,11 +8,13 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST'],  // specify allowed methods (optional)
-  }));
-    
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST"], // specify allowed methods (optional)
+  })
+);
+
 app.use(express.json());
 
 // Initialize Google Generative AI
@@ -22,9 +24,9 @@ const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-pro" });
 // Configure multer for image upload
 const upload = multer({ storage: multer.memoryStorage() });
 
-app.get('/', (req, res) => {
-    res.send("Backend is running");
-  });  
+app.get("/", (req, res) => {
+  res.send("Backend is running");
+});
 
 app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
   try {
@@ -46,7 +48,12 @@ app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
           mimeType: file.mimetype,
         },
       },
-      "First step is identify the plant provided in the image then tell me about the health status of this plant, if infected provide the disease name along with the cure and prevention methods. I prefer short and structured responses",
+      "1. Identify the plant in the image \
+       2. Provide description and name of the diseases if any \
+       3. Provide prevention, cure for the disease if any \
+       4. Common areas and locations where this disease is found \
+       5. Provide important notes of this disease \
+      ",
     ]);
 
     // Send the result back to the client
@@ -60,35 +67,35 @@ app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
 });
 
 app.post("/api/chat", async (req, res) => {
-    try {
-      const { message } = req.body;
-  
-      if (!message) {
-        return res.status(400).json({ error: "No message provided!" });
-      }
-  
-      // Assuming 'model' is initialized correctly
-      let result;
-      try {
-        result = await model.generateContent([message]);
-      } catch (error) {
-        console.error("Error during model generation:", error.message);
-        return res.status(500).json({ error: "Model generation failed" });
-      }
-  
-      const responseText = result?.response?.text();
-      if (!responseText) {
-        console.error("No response text found in model output");
-        return res.status(500).json({ error: "No response text generated" });
-      }
-  
-      console.log("API Response:", responseText);
-      res.json({ response: responseText });
-    } catch (error) {
-      console.error("Error processing text message:", error.message);
-      res.status(500).json({ error: "Internal server error." });
+  try {
+    const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: "No message provided!" });
     }
-});  
+
+    // Assuming 'model' is initialized correctly
+    let result;
+    try {
+      result = await model.generateContent([message]);
+    } catch (error) {
+      console.error("Error during model generation:", error.message);
+      return res.status(500).json({ error: "Model generation failed" });
+    }
+
+    const responseText = result?.response?.text();
+    if (!responseText) {
+      console.error("No response text found in model output");
+      return res.status(500).json({ error: "No response text generated" });
+    }
+
+    console.log("API Response:", responseText);
+    res.json({ response: responseText });
+  } catch (error) {
+    console.error("Error processing text message:", error.message);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

@@ -134,12 +134,12 @@ const CropHealth = () => {
   return (
     <div className="w-full flex flex-col bg-gradient-to-br from-green-100 to-green-500">
       {/* Main Content */}
-      <main className="min-h-[87vh] w-full px-4 py-6 flex flex-col">
+      <main className="min-h-[87vh] w-full px-6 py-6 flex flex-col">
         <div className="w-full max-w-full mx-auto bg-white rounded-xl shadow-xl flex flex-col h-full overflow-hidden">
           {/* Chat Log */}
           <div
             ref={chatLogRef}
-            className="min-h-[75vh] flex-grow overflow-y-auto p-28 bg-gray-50 border-b border-gray-200"
+            className="min-h-[75vh] flex-grow overflow-y-auto bg-gray-50 border-b border-gray-200 p-4"
           >
             {chatLog.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
@@ -149,7 +149,7 @@ const CropHealth = () => {
                     className="text-6xl text-green-600 animate-pulse"
                   />
                 </div>
-
+  
                 <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
                   <FontAwesomeIcon
                     icon={faCommentDots}
@@ -157,20 +157,20 @@ const CropHealth = () => {
                   />
                   Welcome to Plant Health Assistant
                 </h2>
-
+  
                 <p className="text-lg text-gray-600 mb-6 max-w-md">
                   Got plant questions? I'm here to help! Upload an image or ask
                   about plant health.
                 </p>
-
+  
                 <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto">
                   {dummyPrompts.map((prompt, index) => (
                     <div
                       key={index}
                       className="bg-white border border-green-200 rounded-lg p-3 
-                     hover:bg-green-50 transition-all duration-300 
-                     flex items-center justify-center space-x-2 
-                     cursor-pointer group"
+                       hover:bg-green-50 transition-all duration-300 
+                       flex items-center justify-center space-x-2 
+                       cursor-pointer group"
                     >
                       <FontAwesomeIcon
                         icon={
@@ -193,36 +193,43 @@ const CropHealth = () => {
               chatLog.map((entry, index) => (
                 <div
                   key={index}
-                  className={`chat-message mb-4 p-3 rounded-lg shadow-sm max-w-xl mx-auto 
-                    ${
-                      entry.user === "You"
-                        ? "bg-green-100 text-green-900 self-end"
-                        : "bg-gray-200 text-gray-900 self-start"
-                    }`}
+                  className={`flex w-full mb-4 ${
+                    entry.user === "You" ? "justify-end" : "justify-start"
+                  }`}
                 >
-                  <div className="flex items-center mb-2">
-                    <FontAwesomeIcon
-                      icon={entry.user === "You" ? faSeedling : faLeaf}
-                      className={`mr-2 ${
+                  <div
+                    className={`p-4 rounded-lg shadow-sm
+                      ${
                         entry.user === "You"
-                          ? "text-green-600"
-                          : "text-gray-600"
+                          ? "chat-message-right bg-green-100 text-green-900 self-end"
+                          : "chat-message-left bg-gray-200 text-gray-900 self-start min-w-[50%]"
                       }`}
-                    />
-                    <strong className="font-semibold">{entry.user}</strong>
+                  >
+                    <div className="flex items-center mb-2">
+                      <FontAwesomeIcon
+                        icon={entry.user === "You" ? faSeedling : faLeaf}
+                        className={`mr-2 ${
+                          entry.user === "You"
+                            ? "text-green-600"
+                            : "text-gray-600"
+                        }`}
+                      />
+                      <strong className="font-semibold">{entry.user}</strong>
+                    </div>
+                    {/* Here we render markdown */}
+                    <ReactMarkdown>{entry.text}</ReactMarkdown>
                   </div>
-                  <ReactMarkdown>{entry.text}</ReactMarkdown>
                 </div>
               ))
             )}
-
+  
             {loading && (
               <div className="flex justify-center items-center mt-4">
                 <ClipLoader size={40} color="#10B981" loading={loading} />
               </div>
             )}
           </div>
-
+  
           {/* Input Section */}
           <div className="flex items-center gap-3 p-4 bg-white border-t border-gray-200">
             <label
