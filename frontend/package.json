@@ -16,8 +16,10 @@
     "@radix-ui/react-select": "^2.1.4",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
+    "firebase": "^11.1.0",
     "flowbite": "^2.5.2",
     "flowbite-react": "^0.10.2",
+    "framer-motion": "^11.15.0",
     "lucide-react": "^0.468.0",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
@@ -25,6 +27,7 @@
     "react-markdown": "^9.0.1",
     "react-router-dom": "^7.0.2",
     "react-spinners": "^0.15.0",
+    "react-toastify": "^11.0.2",
     "tailwindcss": "^3.4.16"
   },
   "devDependencies": {

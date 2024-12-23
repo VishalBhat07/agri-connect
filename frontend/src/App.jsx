@@ -8,6 +8,7 @@ import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Schemes from "./pages/Schemes/Schemes";
 import PricePredictor from "./pages/Prediction/Predictor";
+import Login from "./pages/Login/Login";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <Route path={"/contact"} element={<Contact />} />
           <Route path={"/schemes"} element={<Schemes />} />
           <Route path={"/test"} element={<PricePredictor />} />
-          {/* <Route path={"/login"} element={<Login />} /> */}
+          <Route path={"/login"} element={<Login />} />
         </Routes>
       </div>
       <Footer />
