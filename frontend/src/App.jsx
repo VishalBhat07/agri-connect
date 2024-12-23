@@ -9,6 +9,7 @@ import Contact from "./pages/Contact/Contact";
 import Schemes from "./pages/Schemes/Schemes";
 import PricePredictor from "./pages/Prediction/Predictor";
 import Login from "./pages/Login/Login";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path={"/schemes"} element={<Schemes />} />
           <Route path={"/test"} element={<PricePredictor />} />
           <Route path={"/login"} element={<Login />} />
+          <Route path={"/profile"} element={<Profile />} />
         </Routes>
       </div>
       <Footer />
