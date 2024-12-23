@@ -3,7 +3,10 @@ import { auth } from "../../../firebaseConfig"; // Adjust the path to where your
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import logo from "/logo.svg";
-import "./Navbar.css"
+import { FaUserCircle } from "react-icons/fa"; // Importing user icon from react-icons
+import { toast, ToastContainer } from "react-toastify"; // Importing toast and ToastContainer
+import "react-toastify/dist/ReactToastify.css"; // Importing the CSS for toastify
+import "./Navbar.css";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -23,9 +26,17 @@ const Navbar = () => {
       await signOut(auth);
       setUser(null);
       navigate("/"); // Redirect to home after sign-out
+      toast.success("Successfully signed out!"); // Show success toast
     } catch (error) {
       console.error("Error signing out: ", error);
+      toast.error("Error signing out!"); // Show error toast
     }
+  };
+
+  // Function to slice the username from the email
+  const getUsername = (email) => {
+    const username = email.split("@")[0]; // Slice email at the '@' symbol
+    return username;
   };
 
   return (
@@ -44,14 +55,20 @@ const Navbar = () => {
           <li onClick={() => navigate("/contact")}>Contact us</li>
         </div>
         {user ? (
-          <div
-            className="cursor-pointer flex items-center space-x-2"
-            onMouseEnter={() => setDropdownVisible(true)}
-            onMouseLeave={() => setDropdownVisible(false)}
-          >
-            <span className="font-medium">{user.displayName || "User"}</span>
+          <div className="relative cursor-pointer flex items-center space-x-2">
+            <FaUserCircle className="text-gray-200 text-xl" /> {/* User icon */}
+            <span className="font-medium">
+              {user.displayName || getUsername(user.email)}{" "}
+              {/* Slice the email if displayName is not available */}
+            </span>
+            <span
+              className="ml-2 cursor-pointer"
+              onClick={() => setDropdownVisible(!dropdownVisible)} // Toggle dropdown visibility on click
+            >
+              ▼ {/* Dropdown icon */}
+            </span>
             {dropdownVisible && (
-              <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg">
+              <div className="absolute top-full right-4 mt-2 w-40 bg-white text-black rounded-md shadow-lg">
                 <button
                   className="block w-full text-left px-4 py-2 hover:bg-gray-200"
                   onClick={() => navigate("/profile")}
@@ -76,6 +93,9 @@ const Navbar = () => {
           </button>
         )}
       </div>
+
+      {/* ToastContainer for displaying toasts */}
+      <ToastContainer />
     </div>
   );
 };
