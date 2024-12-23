@@ -15,6 +15,7 @@ import ReactMarkdown from "react-markdown";
 import "./CropHealth.css";
 
 const CropHealth = () => {
+  const port = 5714;
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState([]);
@@ -65,7 +66,7 @@ const CropHealth = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/analyze-image",
+        `http://localhost:${port}/api/analyze-image`,
         formData,
         {
           headers: {
@@ -100,7 +101,7 @@ const CropHealth = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/chat",
+        `http://localhost:${port}/api/chat`,
         { message: message },
         {
           headers: {
@@ -149,7 +150,7 @@ const CropHealth = () => {
                     className="text-6xl text-green-600 animate-pulse"
                   />
                 </div>
-  
+
                 <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
                   <FontAwesomeIcon
                     icon={faCommentDots}
@@ -157,12 +158,12 @@ const CropHealth = () => {
                   />
                   Welcome to Plant Health Assistant
                 </h2>
-  
+
                 <p className="text-lg text-gray-600 mb-6 max-w-md">
                   Got plant questions? I'm here to help! Upload an image or ask
                   about plant health.
                 </p>
-  
+
                 <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto">
                   {dummyPrompts.map((prompt, index) => (
                     <div
@@ -222,14 +223,14 @@ const CropHealth = () => {
                 </div>
               ))
             )}
-  
+
             {loading && (
               <div className="flex justify-center items-center mt-4">
                 <ClipLoader size={40} color="#10B981" loading={loading} />
               </div>
             )}
           </div>
-  
+
           {/* Input Section */}
           <div className="flex items-center gap-3 p-4 bg-white border-t border-gray-200">
             <label
