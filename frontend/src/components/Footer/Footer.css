@@ -1,67 +1,194 @@
-/* General styles for the footer */
-.footer {
-    background-color: #000; /* Match navbar background */
-    color: #fff; /* Green accents */
-    padding: 20px;
-    border-top: 1px solid #000;
-  }
-  
-  /* Footer content styling */
+/* Footer.css */
+.footer-container {
+  background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
+  padding: 4rem 2rem 1rem;
+  color: #1f2937;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 4rem;
+  padding-bottom: 3rem;
+}
+
+/* Brand Section */
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.brand-icon {
+  font-size: 1.75rem;
+  color: #16a34a;
+}
+
+.brand-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #16a34a;
+  margin: 0;
+}
+
+.description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #16a34a;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.5rem;
+  width: 2rem;
+  height: 2px;
+  background-color: #16a34a;
+  transition: width 0.3s ease;
+}
+
+.footer-section:hover .section-title::after {
+  width: 3rem;
+}
+
+/* Quick Links */
+.quick-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.quick-links li {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.quick-links li:hover {
+  transform: translateX(8px);
+  color: #16a34a;
+}
+
+.link-icon {
+  margin-right: 0.75rem;
+  color: #16a34a;
+  font-size: 0.875rem;
+}
+
+/* Contact Section */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.contact-icon {
+  color: #16a34a;
+  font-size: 1rem;
+}
+
+.contact-item a {
+  color: #4b5563;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact-item a:hover {
+  color: #16a34a;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Hover Effects */
+.footer-section {
+  transition: transform 0.3s ease;
+}
+
+.footer-section:hover {
+  transform: translateY(-5px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
   .footer-content {
-    display: flex;
-    justify-content: space-around;
-    gap: 20px;
-    margin-bottom: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
   }
-  
-  /* Footer section styling */
+
+  .main-section {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
   .footer-section {
-    min-width: 200px;
-  }
-  
-  .footer-section h4 {
-    font-size: 22px;
-    margin-bottom: 20px;
-    color: #4caf50; /* White section headers */
-    text-decoration: underline;
-    font-weight: 700;
-  }
-  
-  .footer-section p,
-  .footer-section ul {
-    font-size: 17px;
-    margin: 10px 0;
-    color: #fff;
-  }
-  
-  .footer-section ul {
-    list-style: none;
-  }
-  
-  .footer-section ul li {
-    margin-bottom: 12px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-  }
-  
-  .footer-section ul li:hover {
-    color: #4caf50; /* Light green on hover */
-  }
-  
-  /* Footer bottom bar */
-  .footer-bottom {
     text-align: center;
-    font-size: 14px;
-    border-top: 1px solid #fff;
-    padding-top: 10px;
-    color: #fff;
   }
-  
-  /* Responsive design */
-  @media (max-width: 768px) {
-    .footer-content {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+
+  .section-title::after {
+    left: 50%;
+    transform: translateX(-50%);
   }
-  
+
+  .quick-links li {
+    justify-content: center;
+  }
+
+  .contact-item {
+    justify-content: center;
+  }
+
+  .brand-container {
+    justify-content: center;
+  }
+}
+
+/* Animation */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer-section {
+  animation: slideUp 0.6s ease-out forwards;
+}
