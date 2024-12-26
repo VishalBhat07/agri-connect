@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSeedling } from "@fortawesome/free-solid-svg-icons";
-import { auth } from "../../../firebaseConfig";
+import { auth } from "../../../firebaseFunctions/firebaseConfig";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { db } from "../../../firebaseConfig"; // Import Firestore
+import { db } from "../../../firebaseFunctions/firebaseConfig"; // Import Firestore
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";

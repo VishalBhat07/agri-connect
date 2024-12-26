@@ -10,7 +10,8 @@ import Schemes from "./pages/Schemes/Schemes";
 import PricePredictor from "./pages/Prediction/Predictor";
 import Login from "./pages/Login/Login";
 import Profile from "./pages/Profile/Profile";
-import FarmerMarket from "./pages/MarketPlace/FarmerMarket"
+import FarmerMarket from "./pages/MarketPlace/FarmerMarket";
+import Predictor from "./pages/Prediction/Predictor";
 
 function App() {
   return (
@@ -26,7 +27,8 @@ function App() {
           <Route path={"/test"} element={<PricePredictor />} />
           <Route path={"/login"} element={<Login />} />
           <Route path={"/profile"} element={<Profile />} />
-          <Route path={"/marketplace"} element={<FarmerMarket/>}/>
+          <Route path={"/marketplace"} element={<FarmerMarket />} />
+          <Route path={"/test"} element={<Predictor />}></Route>
         </Routes>
       </div>
       <Footer />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { auth } from "../../../firebaseConfig"; // Adjust the path to where your firebase.js is
+import { auth } from "../../../firebaseFunctions/firebaseConfig"; // Adjust the path to where your firebase.js is
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import logo from "/logo.svg";
