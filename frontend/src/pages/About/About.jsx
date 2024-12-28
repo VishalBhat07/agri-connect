@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSeedling,
@@ -13,7 +13,56 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "./About.css";
 
+const teamInfo = [
+  {
+    name: "Vishal K Bhat",
+    role: "Team leader",
+  },
+  {
+    name: "V S Sreenivaas",
+    role: "Member",
+  },
+  {
+    name: "Sumukh S Raikar",
+    role: "Member",
+  },
+  {
+    name: "Siddharth Thotada",
+    role: "Member",
+  },
+];
+
+const Popup = ({ closePopup }) => {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+        <button
+          className="absolute top-3 right-3 text-gray-500 hover:text-black"
+          onClick={closePopup}
+        >
+          ✖
+        </button>
+        <h2 className="text-2xl font-bold text-green-700 mb-4">Our Team</h2>
+        <ul className="space-y-4">
+          {teamInfo.map((member, index) => (
+            <li key={index} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+              <h3 className="text-lg font-semibold">{member.name}</h3>
+              <p className="text-sm text-gray-700">Role: {member.role}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
 const Left = () => {
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+
+  const togglePopup = () => {
+    setIsPopupVisible(!isPopupVisible);
+  };
+
   return (
     <div className="flex flex-col justify-center p-8 bg-gradient-to-br from-green-50 to-green-100 w-full min-h-[90vh] mx-auto">
       <div
@@ -43,34 +92,11 @@ const Left = () => {
         </div>
       </div>
 
-      <div
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-        data-aos="fade-up"
-        data-aos-delay="400"
-      >
-        {[
-          { icon: faMedal, title: "Excellence", value: "5+ Years" },
-          { icon: faUsers, title: "Farmers Helped", value: "10,000+" },
-          { icon: faChartLine, title: "Growth", value: "300%" },
-        ].map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 text-center"
-          >
-            <FontAwesomeIcon
-              icon={stat.icon}
-              className="text-3xl text-green-600 mb-2 animate-bounce-slow"
-            />
-            <div className="font-semibold text-gray-800">{stat.title}</div>
-            <div className="text-green-600 font-bold">{stat.value}</div>
-          </div>
-        ))}
-      </div>
-
       <div className="flex gap-6 mt-6" data-aos="fade-up" data-aos-delay="600">
         <button
           className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-pulse-subtle"
           aria-label="Our Team"
+          onClick={togglePopup}
         >
           Meet Our Team
         </button>
@@ -81,6 +107,8 @@ const Left = () => {
           Contact Us
         </button>
       </div>
+
+      {isPopupVisible && <Popup closePopup={togglePopup} />}
     </div>
   );
 };

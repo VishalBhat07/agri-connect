@@ -47,7 +47,7 @@ const Navbar = () => {
           <div className="logo-text">AgriConnect</div>
         </div>
         <div className="tabs">
-          <li>Market Place</li>
+          <li onClick={() => navigate("/marketplace")}>Market Place</li>
           <li onClick={() => navigate("/crophealth")}>Crop Health</li>
           <li>Learning Resources</li>
           <li onClick={() => navigate("/schemes")}>Government Schemes</li>
