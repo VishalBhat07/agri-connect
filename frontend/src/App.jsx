@@ -28,7 +28,12 @@ function App() {
           <Route path={"/test"} element={<PricePredictor />} />
           <Route path={"/login"} element={<Login />} />
           <Route path={"/profile"} element={<Profile />} />
-          <Route path={"/marketplace"} element={<FarmerMarket />} />
+          <Route
+            path={"/marketplace"}
+            element={
+              <FarmerMarket farmerID={"910ace36-4083-4458-b91b-cb26dd572ab9"} />
+            }
+          />
           <Route path={"/learn"} element={<LearningResourcesPage />} />
           <Route path={"/test"} element={<Predictor />} />
         </Routes>

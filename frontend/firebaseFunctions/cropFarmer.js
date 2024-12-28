@@ -1,6 +1,5 @@
 import { db } from "./firebaseConfig.js";
 import {
-  getFirestore,
   doc,
   setDoc,
   deleteDoc,
@@ -8,83 +7,19 @@ import {
   addDoc,
   getDoc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid"; // For unique IDs
 
+// Crop class
 export class Crop {
-  constructor(cropName, cropVariety, cropPrice, cropLocation) {
+  constructor(cropName, cropVariety, cropPrice, cropWeight, cropLocation) {
     this.cropName = cropName;
     this.cropVariety = cropVariety;
     this.cropPrice = cropPrice;
+    this.cropWeight = cropWeight;
     this.cropID = uuidv4();
     this.cropLocation = cropLocation;
-  }
-
-  async addCrop(farmerID) {
-    try {
-      const cropRef = collection(db, "farmers", farmerID, "crops");
-      await addDoc(cropRef, {
-        cropName: this.cropName,
-        cropVariety: this.cropVariety,
-        cropPrice: this.cropPrice,
-        cropID: this.cropID,
-        cropLocation: this.cropLocation,
-      });
-      console.log("Crop added successfully");
-    } catch (error) {
-      console.error("Error adding crop: ", error);
-    }
-  }
-
-  async deleteCrop(farmerID) {
-    try {
-      const cropDoc = doc(
-        db,
-        "users",
-        "farmers",
-        farmerID,
-        "crops",
-        this.cropID
-      );
-      await deleteDoc(cropDoc);
-      console.log("Crop deleted successfully");
-    } catch (error) {
-      console.error("Error deleting crop: ", error);
-    }
-  }
-
-  async updateCrop(farmerID, updatedData) {
-    try {
-      const cropDoc = doc(
-        db,
-        "users",
-        "farmers",
-        farmerID,
-        "crops",
-        this.cropID
-      );
-      await updateDoc(cropDoc, updatedData);
-      console.log("Crop updated successfully");
-    } catch (error) {
-      console.error("Error updating crop: ", error);
-    }
-  }
-
-  async getCrop(farmerID) {
-    try {
-      const cropDoc = await getDoc(
-        doc(db, "farmers", farmerID, "crops", this.cropID)
-      );
-      if (cropDoc.exists()) {
-        console.log("Crop data:", cropDoc.data());
-        return cropDoc.data();
-      } else {
-        console.log("No such crop!");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error fetching crop: ", error);
-    }
   }
 
   toJSON() {
@@ -92,6 +27,7 @@ export class Crop {
       cropName: this.cropName,
       cropVariety: this.cropVariety,
       cropPrice: this.cropPrice,
+      cropWeight: this.cropWeight,
       cropLocation: this.cropLocation,
       cropID: this.cropID,
     };
@@ -102,25 +38,26 @@ export class Crop {
       json.cropName,
       json.cropVariety,
       json.cropPrice,
-      json.cropLocation,
-      json.cropID
+      json.cropWeight,
+      json.cropLocation
     );
   }
 }
 
+// Farmer class
 export class Farmer {
   constructor(emailID) {
     this.emailID = emailID;
     this.farmerID = uuidv4();
-    this.crops = []; // Array of Crop objects
+    this.crops = [];
   }
 
+  // Add farmer to Firestore
   async addFarmer() {
     try {
       await setDoc(doc(db, "farmers", this.farmerID), {
         emailID: this.emailID,
         farmerID: this.farmerID,
-        crops: this.crops.map((crop) => crop.toJSON()), // Serialize crops
       });
       console.log("Farmer added successfully");
     } catch (error) {
@@ -128,6 +65,7 @@ export class Farmer {
     }
   }
 
+  // Delete farmer from Firestore
   async deleteFarmer() {
     try {
       await deleteDoc(doc(db, "farmers", this.farmerID));
@@ -137,62 +75,38 @@ export class Farmer {
     }
   }
 
-  async updateFarmer() {
-    try {
-      await setDoc(
-        doc(db, "farmers", this.farmerID),
-        {
-          emailID: this.emailID,
-          farmerID: this.farmerID,
-          crops: this.crops.map((crop) => crop.toJSON()), // Serialize crops
-        },
-        { merge: true }
-      );
-      console.log("Farmer updated successfully");
-    } catch (error) {
-      console.error("Error updating farmer: ", error);
-    }
-  }
-
-  static async getFarmer(farmerID) {
-    try {
-      const farmerDoc = await getDoc(doc(db, "farmers", farmerID));
-      if (farmerDoc.exists()) {
-        const data = farmerDoc.data();
-        this.emailID = data.emailID;
-        this.farmerID = data.farmerID;
-        this.crops = data.crops.map((crop) => Crop.fromJSON(crop)); // Deserialize crops
-        console.log("Farmer data:", data);
-        return this;
-      } else {
-        console.log("No such farmer!");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error getting farmer: ", error);
-    }
-  }
-
-  async getCrops() {
-    try {
-      const cropsSnapshot = await getDocs(
-        collection(db, "farmers", this.farmerID, "crops")
-      );
-      this.crops = []; // Clear the existing crops
-      cropsSnapshot.forEach((doc) => {
-        const cropData = doc.data();
-        this.crops.push(Crop.fromJSON(cropData)); // Deserialize each crop
-      });
-      console.log("Crops data:", this.crops);
-      return this.crops;
-    } catch (error) {
-      console.error("Error getting crops: ", error);
-    }
-  }
-
-  // Add a new crop to the farmer
+  // Add a crop to Firestore and to the local crops array
   async addCrop(crop) {
     if (!(crop instanceof Crop)) {
+      console.error("Invalid crop object");
+      return;
+    }
+
+    try {
+      const cropRef = doc(db, "farmers", this.farmerID, "crops", crop.cropID);
+      await setDoc(cropRef, crop.toJSON());
+      this.crops.push(crop);
+      console.log("Crop added successfully");
+    } catch (error) {
+      console.error("Error adding crop:", error);
+    }
+  }
+
+  // Delete a crop from Firestore and remove it from the local crops array
+  async deleteCrop(cropID) {
+    try {
+      const cropRef = doc(db, "farmers", this.farmerID, "crops", cropID);
+      await deleteDoc(cropRef);
+      this.crops = this.crops.filter((crop) => crop.cropID !== cropID);
+      console.log("Crop deleted successfully");
+    } catch (error) {
+      console.error("Error deleting crop:", error);
+    }
+  }
+
+  // Update a crop in Firestore and the local crops array
+  async updateCrop(updatedCrop) {
+    if (!(updatedCrop instanceof Crop)) {
       console.error("Invalid crop object");
       return;
     }
@@ -203,13 +117,53 @@ export class Farmer {
         "farmers",
         this.farmerID,
         "crops",
-        crop.cropID
+        updatedCrop.cropID
       );
-      await setDoc(cropRef, crop.toJSON()); // Serialize crop
-      this.crops.push(crop); // Add crop to the local array
-      console.log("Crop added successfully");
+      await setDoc(cropRef, updatedCrop.toJSON()); // Merge updates with existing data
+
+      // Update the local crops array
+      const cropIndex = this.crops.findIndex(
+        (crop) => crop.cropID === updatedCrop.cropID
+      );
+      if (cropIndex !== -1) {
+        this.crops[cropIndex] = updatedCrop; // Replace with the updated crop object
+      }
+      console.log("Crop updated successfully");
     } catch (error) {
-      console.error("Error adding crop:", error);
+      console.error("Error updating crop:", error);
+    }
+  }
+
+  // Get all crops for the farmer from Firestore
+  async getCrops() {
+    try {
+      const cropsSnapshot = await getDocs(
+        collection(db, "farmers", this.farmerID, "crops")
+      );
+      this.crops = cropsSnapshot.docs.map((doc) => Crop.fromJSON(doc.data()));
+      console.log("Crops data:", this.crops);
+      return this.crops;
+    } catch (error) {
+      console.error("Error getting crops:", error);
+    }
+  }
+
+  // Retrieve farmer details from Firestore
+  static async getFarmer(farmerID) {
+    try {
+      const farmerDoc = await getDoc(doc(db, "farmers", farmerID));
+      if (farmerDoc.exists()) {
+        const data = farmerDoc.data();
+        const farmer = new Farmer(data.emailID);
+        farmer.farmerID = data.farmerID;
+        console.log("Farmer data:", data);
+        return farmer;
+      } else {
+        console.log("No such farmer!");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting farmer: ", error);
     }
   }
 }

@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Farmer, Crop } from "../../../firebaseFunctions/cropFarmer"; // Import your Farmer and Crop classes
 
-const CropManager = ({ farmerID }) => {
+const FarmerMarket = ({ farmerID }) => {
+  const [farmer, setFarmer] = useState(null); // Farmer instance
   const [crops, setCrops] = useState([]); // List of crops
   const [newCrop, setNewCrop] = useState({
     cropName: "",
     cropVariety: "",
     cropPrice: "",
+    cropWeight: "",
     cropLocation: "",
   }); // Form state for new crops
   const [editingIndex, setEditingIndex] = useState(-1); // -1 if not editing
   const [editingCrop, setEditingCrop] = useState({}); // Store the crop being edited
 
-  let farmer = null;
-
-  async function fetchFarmer(){farmer = await Farmer.getFarmer(farmerID)};
-  fetchFarmer();
-
-
-  // Load crops on component mount
+  // Load farmer and crops on component mount
   useEffect(() => {
-    const fetchCrops = async () => {
-      await farmer.getFarmer(farmerID); // Load farmer details
-      const farmerCrops = await farmer.getCrops();
-      setCrops(farmerCrops); // Set the crops in state
+    const fetchFarmerAndCrops = async () => {
+      try {
+        const fetchedFarmer = await Farmer.getFarmer(farmerID);
+        setFarmer(fetchedFarmer);
+
+        if (fetchedFarmer) {
+          const farmerCrops = await fetchedFarmer.getCrops();
+          setCrops(farmerCrops);
+        }
+      } catch (error) {
+        console.error("Error fetching farmer and crops:", error);
+      }
     };
-    fetchCrops();
+
+    fetchFarmerAndCrops();
   }, [farmerID]);
 
   // Handle form input changes
@@ -41,22 +46,41 @@ const CropManager = ({ farmerID }) => {
 
   // Add a new crop
   const addCrop = async () => {
-    const crop = new Crop(
-      newCrop.cropName,
-      newCrop.cropVariety,
-      parseFloat(newCrop.cropPrice),
-      newCrop.cropLocation
-    );
-    await farmer.addCrop(crop);
-    setCrops((prev) => [...prev, crop]);
-    setNewCrop({ cropName: "", cropVariety: "", cropPrice: "", cropLocation: "" });
+    if (!farmer) return;
+
+    try {
+      const crop = new Crop(
+        newCrop.cropName,
+        newCrop.cropVariety,
+        parseFloat(newCrop.cropPrice),
+        newCrop.cropWeight,
+        newCrop.cropLocation
+      );
+      await farmer.addCrop(crop); // Add to Firestore
+      setCrops((prev) => [...prev, crop]); // Update local state
+      setNewCrop({
+        cropName: "",
+        cropVariety: "",
+        cropPrice: "",
+        cropWeight: "",
+        cropLocation: "",
+      });
+    } catch (error) {
+      console.error("Error adding crop:", error);
+    }
   };
 
   // Delete a crop
   const deleteCrop = async (index) => {
-    const crop = crops[index];
-    await crop.deleteCrop(farmerID);
-    setCrops((prev) => prev.filter((_, i) => i !== index));
+    if (!farmer) return;
+
+    try {
+      const crop = crops[index];
+      await farmer.deleteCrop(crop.cropID); // Remove from Firestore
+      setCrops((prev) => prev.filter((_, i) => i !== index)); // Update local state
+    } catch (error) {
+      console.error("Error deleting crop:", error);
+    }
   };
 
   // Start editing a crop
@@ -67,20 +91,45 @@ const CropManager = ({ farmerID }) => {
 
   // Save edited crop
   const saveCrop = async (index) => {
-    const crop = new Crop(
-      editingCrop.cropName,
-      editingCrop.cropVariety,
-      parseFloat(editingCrop.cropPrice),
-      editingCrop.cropLocation
-    );
-    crop.cropID = crops[index].cropID; // Retain the existing crop ID
-    await crop.updateCrop(farmerID, crop.toJSON());
-    const updatedCrops = [...crops];
-    updatedCrops[index] = crop;
-    setCrops(updatedCrops);
-    setEditingIndex(-1); // Reset editing state
+    if (!farmer) return;
+  
+    // Validate all fields are present
+    if (
+      !editingCrop.cropName ||
+      !editingCrop.cropVariety ||
+      editingCrop.cropPrice === undefined ||
+      editingCrop.cropWeight === undefined ||
+      !editingCrop.cropLocation
+    ) {
+      console.error("Invalid crop data:", editingCrop);
+      return;
+    }
+  
+    try {
+      // Use the existing crop and update its properties
+      const updatedCrop = new Crop(
+        editingCrop.cropName,
+        editingCrop.cropVariety,
+        parseFloat(editingCrop.cropPrice),
+        parseFloat(editingCrop.cropWeight),
+        editingCrop.cropLocation
+      );
+  
+      // Retain the existing crop ID
+      updatedCrop.cropID = crops[index].cropID;
+      // Update Firestore and local state
+      await farmer.updateCrop(updatedCrop);
+  
+      // Update React state to reflect changes
+      const updatedCrops = [...crops];
+      updatedCrops[index] = updatedCrop;
+      setCrops(updatedCrops);
+      setEditingIndex(-1); // Reset editing state
+    } catch (error) {
+      console.error("Error updating crop:", error);
+    }
   };
-
+  
   return (
     <div>
       <h1>Crop Manager</h1>
@@ -111,8 +160,16 @@ const CropManager = ({ farmerID }) => {
           <input
             type="number"
             name="cropPrice"
-            placeholder="Crop Price"
+            placeholder="Crop Price (per kg)"
             value={newCrop.cropPrice}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="number"
+            name="cropWeight"
+            placeholder="Crop weight (in kg)"
+            value={newCrop.cropWeight}
             onChange={handleInputChange}
             required
           />
@@ -133,6 +190,7 @@ const CropManager = ({ farmerID }) => {
             <th>Crop Name</th>
             <th>Crop Variety</th>
             <th>Crop Price</th>
+            <th>Crop Weight</th>
             <th>Crop Location</th>
             <th>Actions</th>
           </tr>
@@ -168,6 +226,14 @@ const CropManager = ({ farmerID }) => {
                   </td>
                   <td>
                     <input
+                      type="number"
+                      name="cropWeight"
+                      value={editingCrop.cropWeight}
+                      onChange={handleEditingChange}
+                    />
+                  </td>
+                  <td>
+                    <input
                       type="text"
                       name="cropLocation"
                       value={editingCrop.cropLocation}
@@ -184,6 +250,7 @@ const CropManager = ({ farmerID }) => {
                   <td>{crop.cropName}</td>
                   <td>{crop.cropVariety}</td>
                   <td>{crop.cropPrice}</td>
+                  <td>{crop.cropWeight}</td>
                   <td>{crop.cropLocation}</td>
                   <td>
                     <button onClick={() => editCrop(index)}>Edit</button>
@@ -199,4 +266,4 @@ const CropManager = ({ farmerID }) => {
   );
 };
 
-export default CropManager;
+export default FarmerMarket;
