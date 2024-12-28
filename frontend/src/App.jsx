@@ -12,6 +12,7 @@ import Login from "./pages/Login/Login";
 import Profile from "./pages/Profile/Profile";
 import FarmerMarket from "./pages/MarketPlace/FarmerMarket";
 import Predictor from "./pages/Prediction/Predictor";
+import LearningResourcesPage from "./pages/Learn/Learn";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path={"/login"} element={<Login />} />
           <Route path={"/profile"} element={<Profile />} />
           <Route path={"/marketplace"} element={<FarmerMarket />} />
+          <Route path={"/learn"} element={<LearningResourcesPage />} />
           <Route path={"/test"} element={<Predictor />} />
         </Routes>
       </div>
