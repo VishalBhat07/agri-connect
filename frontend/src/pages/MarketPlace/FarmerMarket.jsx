@@ -14,23 +14,30 @@ const FarmerMarket = ({ farmerID }) => {
   const [editingIndex, setEditingIndex] = useState(-1); // -1 if not editing
   const [editingCrop, setEditingCrop] = useState({}); // Store the crop being edited
 
-  // Load farmer and crops on component mount
   useEffect(() => {
-    const fetchFarmerAndCrops = async () => {
+    async function fetchFarmer() {
       try {
         const fetchedFarmer = await Farmer.getFarmer(farmerID);
         setFarmer(fetchedFarmer);
-
-        if (fetchedFarmer) {
-          const farmerCrops = await fetchedFarmer.getCrops();
-          setCrops(farmerCrops);
-        }
+        return fetchedFarmer; // Return for potential chaining
       } catch (error) {
-        console.error("Error fetching farmer and crops:", error);
+        console.error("Error fetching farmer details", error);
+        return null;
       }
-    };
+    }
 
-    fetchFarmerAndCrops();
+    async function fetchCrops(farmer) {
+      if (!farmer) return;
+
+      try {
+        const fetchedCrops = await farmer.getCrops();
+        setCrops(fetchedCrops);
+      } catch (error) {
+        console.error("Error fetching farmer crops", error);
+      }
+    }
+
+    fetchFarmer().then(fetchCrops);
   }, [farmerID]);
 
   // Handle form input changes
@@ -56,8 +63,22 @@ const FarmerMarket = ({ farmerID }) => {
         newCrop.cropWeight,
         newCrop.cropLocation
       );
-      await farmer.addCrop(crop); // Add to Firestore
-      setCrops((prev) => [...prev, crop]); // Update local state
+
+      // Add crop to Firestore
+      await farmer.addCrop(crop);
+
+      // Fetch updated crops
+      const fetchedCrops = await farmer.getCrops();
+
+      // Add null check before setting crops
+      if (fetchedCrops && fetchedCrops.length > 0) {
+        setCrops(fetchedCrops);
+      } else {
+        // Optional: Handle empty crops scenario
+        setCrops([]);
+      }
+
+      // Reset form
       setNewCrop({
         cropName: "",
         cropVariety: "",
@@ -76,8 +97,18 @@ const FarmerMarket = ({ farmerID }) => {
 
     try {
       const crop = crops[index];
+      console.log(farmer);
+      console.log(crop.cropID);
       await farmer.deleteCrop(crop.cropID); // Remove from Firestore
-      setCrops((prev) => prev.filter((_, i) => i !== index)); // Update local state
+      const fetchedCrops = await farmer.getCrops();
+
+      // Add null check before setting crops
+      if (fetchedCrops && fetchedCrops.length > 0) {
+        setCrops(fetchedCrops);
+      } else {
+        // Optional: Handle empty crops scenario
+        setCrops([]);
+      }
     } catch (error) {
       console.error("Error deleting crop:", error);
     }
@@ -92,7 +123,7 @@ const FarmerMarket = ({ farmerID }) => {
   // Save edited crop
   const saveCrop = async (index) => {
     if (!farmer) return;
-  
+
     // Validate all fields are present
     if (
       !editingCrop.cropName ||
@@ -104,7 +135,7 @@ const FarmerMarket = ({ farmerID }) => {
       console.error("Invalid crop data:", editingCrop);
       return;
     }
-  
+
     try {
       // Use the existing crop and update its properties
       const updatedCrop = new Crop(
@@ -114,12 +145,12 @@ const FarmerMarket = ({ farmerID }) => {
         parseFloat(editingCrop.cropWeight),
         editingCrop.cropLocation
       );
-  
+
       // Retain the existing crop ID
       updatedCrop.cropID = crops[index].cropID;
       // Update Firestore and local state
       await farmer.updateCrop(updatedCrop);
-  
+
       // Update React state to reflect changes
       const updatedCrops = [...crops];
       updatedCrops[index] = updatedCrop;
@@ -129,7 +160,7 @@ const FarmerMarket = ({ farmerID }) => {
       console.error("Error updating crop:", error);
     }
   };
-  
+
   return (
     <div>
       <h1>Crop Manager</h1>

@@ -34,13 +34,15 @@ export class Crop {
   }
 
   static fromJSON(json) {
-    return new Crop(
+    const crop = new Crop(
       json.cropName,
       json.cropVariety,
       json.cropPrice,
       json.cropWeight,
       json.cropLocation
     );
+    crop.cropID = json.cropID;
+    return crop;
   }
 }
 
@@ -95,12 +97,32 @@ export class Farmer {
   // Delete a crop from Firestore and remove it from the local crops array
   async deleteCrop(cropID) {
     try {
+      if (!cropID) {
+        console.error("Invalid cropID: Cannot delete");
+        return false;
+      }
+
       const cropRef = doc(db, "farmers", this.farmerID, "crops", cropID);
+
+      const docSnap = await getDoc(cropRef);
+      if (!docSnap.exists()) {
+        console.error(`Crop with ID ${cropID} does not exist`);
+        return false;
+      }
+
       await deleteDoc(cropRef);
+
       this.crops = this.crops.filter((crop) => crop.cropID !== cropID);
-      console.log("Crop deleted successfully");
+
+      console.log(`Crop ${cropID} deleted successfully`);
+      return true;
     } catch (error) {
-      console.error("Error deleting crop:", error);
+      console.error("Detailed Crop Deletion Error:", {
+        message: error.message,
+        code: error.code,
+        cropID: cropID,
+      });
+      return false;
     }
   }
 
@@ -119,7 +141,7 @@ export class Farmer {
         "crops",
         updatedCrop.cropID
       );
-      await setDoc(cropRef, updatedCrop.toJSON()); // Merge updates with existing data
+      await updateDoc(cropRef, updatedCrop.toJSON()); // Merge updates with existing data
 
       // Update the local crops array
       const cropIndex = this.crops.findIndex(
