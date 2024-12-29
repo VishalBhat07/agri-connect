@@ -1,4 +1,5 @@
 import { Farmer, Crop } from "./cropFarmer.js"; // Ensure the classes are imported correctly
+import { fetchFarmer } from "./fetchUser.js";
 
 // Main function to execute the required operations
 async function main() {
@@ -44,14 +45,9 @@ async function main() {
     //     );
     //   });
     // }
-    let farmer1 = new Farmer("test1@gmail.com");
-    const farmerID = "910ace36-4083-4458-b91b-cb26dd572ab9";
+    const farmer = await fetchFarmer("test2@gmail.com");
+    console.log(farmer);
 
-    farmer1 = await Farmer.getFarmer(farmerID);
-    await farmer1.getCrops();
-    console.log(farmer1);
-
-    farmer1.deleteCrop("9a09a953-0e94-4c1a-9ef1-ef940cf5c7b1");
   } catch (error) {
     console.error("Error during operations:", error);
   }

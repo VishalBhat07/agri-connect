@@ -1,4 +1,7 @@
 import "./App.css";
+import React, { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebaseFunctions/firebaseConfig";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
@@ -13,8 +16,35 @@ import Profile from "./pages/Profile/Profile";
 import FarmerMarket from "./pages/MarketPlace/FarmerMarket";
 import Predictor from "./pages/Prediction/Predictor";
 import LearningResourcesPage from "./pages/Learn/Learn";
+import { fetchFarmer } from "../firebaseFunctions/fetchUser";
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [farmer, setFarmer] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const fetchedFarmer = await fetchFarmer(user.email);
+          if (fetchedFarmer) {
+            setFarmer(fetchedFarmer);
+          } else {
+            setFarmer(null);
+          }
+          setCurrentUser(user);
+        } catch {
+          setFarmer(null);
+        }
+      } else {
+        setCurrentUser(null);
+        setFarmer(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -28,12 +58,14 @@ function App() {
           <Route path={"/test"} element={<PricePredictor />} />
           <Route path={"/login"} element={<Login />} />
           <Route path={"/profile"} element={<Profile />} />
-          <Route
-            path={"/marketplace"}
-            element={
-              <FarmerMarket farmerID={"910ace36-4083-4458-b91b-cb26dd572ab9"} />
-            }
-          />
+          {farmer && (
+            <Route
+              path={"/marketplace"}
+              element={
+                <FarmerMarket farmerID={farmer.farmerID} />
+              }
+            />
+          )}
           <Route path={"/learn"} element={<LearningResourcesPage />} />
           <Route path={"/test"} element={<Predictor />} />
         </Routes>

@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import { doc, setDoc } from "firebase/firestore"; // Firestore methods
 import { useNavigate } from "react-router-dom"; // Import the navigate hook
+import { Farmer } from "../../../firebaseFunctions/cropFarmer";
 
 export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -37,14 +38,11 @@ export default function Login() {
           email,
           password
         );
-        const user = userCredential.user;
 
-        // Save user details in Firestore
-        await setDoc(doc(db, "users", user.uid), {
-          email: user.email,
-          category: category,
-          createdAt: new Date(),
-        });
+        if (category === "farmer"){
+          const farmer = new Farmer(email);
+          farmer.addFarmer();
+        }
 
         toast.success("Sign-up successful!", {
           onClose: () => navigate("/profile"), // Navigate after the toast disappears
