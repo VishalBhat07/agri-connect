@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { auth } from "../../../firebaseFunctions/firebaseConfig"; // Adjust the path to where your firebase.js is
+import { auth } from "../../../firebaseFunctions/firebaseConfig"; // Adjust the path to your firebase.js
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import logo from "/logo.svg";
@@ -18,7 +18,19 @@ const Navbar = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-    return () => unsubscribe();
+
+    // Close dropdown on outside click
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest(".dropdown")) {
+        setDropdownVisible(false);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      unsubscribe();
+      document.removeEventListener("click", handleOutsideClick);
+    };
   }, []);
 
   const handleSignOut = async () => {
@@ -35,6 +47,7 @@ const Navbar = () => {
 
   // Function to slice the username from the email
   const getUsername = (email) => {
+    if (!email) return "User"; // Fallback for invalid email
     const username = email.split("@")[0]; // Slice email at the '@' symbol
     return username;
   };
@@ -55,7 +68,7 @@ const Navbar = () => {
           <li onClick={() => navigate("/contact")}>Contact us</li>
         </div>
         {user ? (
-          <div className="relative cursor-pointer flex items-center space-x-2">
+          <div className="relative cursor-pointer flex items-center space-x-2 dropdown">
             <FaUserCircle className="text-gray-200 text-xl" /> {/* User icon */}
             <span className="font-medium">
               {user.displayName || getUsername(user.email)}{" "}
@@ -68,10 +81,10 @@ const Navbar = () => {
               ▼ {/* Dropdown icon */}
             </span>
             {dropdownVisible && (
-              <div className="absolute top-full right-4 mt-2 w-40 bg-white text-black rounded-md shadow-lg">
+              <div className="absolute top-full right-4 mt-2 w-40 bg-white text-black rounded-md shadow-lg dropdown-menu">
                 <button
                   className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                  onClick={() => navigate("/profile")}
+                  onClick={() => navigate(`/profile/${user.uid}`)} // Corrected from user.id to user.uid
                 >
                   My Profile
                 </button>

@@ -39,19 +39,19 @@ export default function Login() {
           password
         );
 
-        if (category === "farmer"){
+        if (category === "farmer") {
           const farmer = new Farmer(email);
           farmer.addFarmer();
         }
 
         toast.success("Sign-up successful!", {
-          onClose: () => navigate("/profile"), // Navigate after the toast disappears
+          onClose: () => navigate("/"), // Navigate after the toast disappears
         });
       } else {
         // Login with Firebase Authentication
         await signInWithEmailAndPassword(auth, email, password);
         toast.success("Login successful!", {
-          onClose: () => navigate("/profile"), // Navigate after the toast disappears
+          onClose: () => navigate("/"), // Navigate after the toast disappears
         });
       }
     } catch (error) {
