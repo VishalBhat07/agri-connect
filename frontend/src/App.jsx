@@ -14,6 +14,7 @@ import PricePredictor from "./pages/Prediction/Predictor";
 import Login from "./pages/Login/Login";
 import FarmerProfile from "./pages/Profile/FarmerProfile";
 import BuyerProfile from "./pages/Profile/BuyerProfile";
+import LearningResourcesPage from "./pages/Learn/Learn";
 import { fetchFarmer } from "../firebaseFunctions/fetchUser";
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
           <Route path="/schemes" element={<Schemes />} />
           <Route path="/test" element={<PricePredictor />} />
           <Route path="/login" element={<Login />} />
+          <Route path={"/learn"} element={<LearningResourcesPage />} />
           <Route
             path="/profile/:userID"
             element={farmer ? <FarmerProfile /> : <BuyerProfile />}
