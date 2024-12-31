@@ -189,3 +189,38 @@ export class Farmer {
     }
   }
 }
+
+export async function getAllFarmers() {
+  try {
+    const farmersSnapshot = await getDocs(collection(db, "farmers"));
+    const farmers = farmersSnapshot.docs.map(doc => {
+      const data = doc.data();
+      const farmer = new Farmer(data.emailID);
+      farmer.farmerID = data.farmerID;
+      return farmer;
+    });
+    return farmers;
+  } catch (error) {
+    console.error("Error fetching farmers:", error);
+    throw error;
+  }
+}
+
+export async function getAllFarmersCrops() {
+  try {
+    const farmers = await getAllFarmers();
+    const farmersWithCrops = await Promise.all(
+      farmers.map(async (farmer) => {
+        const crops = await farmer.getCrops();
+        return {
+          farmer,
+          crops
+        };
+      })
+    );
+    return farmersWithCrops;
+  } catch (error) {
+    console.error("Error fetching farmers' crops:", error);
+    throw error;
+  }
+}

@@ -17,6 +17,7 @@ import BuyerProfile from "./pages/Profile/BuyerProfile";
 import LearningResourcesPage from "./pages/Learn/Learn";
 import { fetchFarmer } from "../firebaseFunctions/fetchUser";
 import FarmerMarket from "./pages/MarketPlace/FarmerMarket";
+import BuyerMarket from "./pages/MarketPlace/BuyerMarket";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -78,14 +79,15 @@ function App() {
             path="/profile/:userID"
             element={farmer ? <FarmerProfile /> : <BuyerProfile />}
           />
-          {farmer && (
-            <Route
-              path={"/marketplace"}
-              element={
-                <FarmerMarket farmerID={farmer.farmerID} />
-              }
-            />
-          )}
+
+          <Route
+            path={"/marketplace"}
+            element={
+              (farmer && <FarmerMarket farmerID={farmer.farmerID} />) || (
+                <BuyerMarket />
+              )
+            }
+          />
         </Routes>
       </div>
       <Footer />
