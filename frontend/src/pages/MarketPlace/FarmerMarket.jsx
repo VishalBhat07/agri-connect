@@ -67,36 +67,6 @@ const FarmerMarket = ({ farmerID }) => {
     });
   };
 
-  const fetchPricePrediction = async (crop) => {
-    try {
-      const response = await fetch("http://localhost:3000/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          district: crop.cropLocation,
-          commodity: crop.cropName,
-          variety: crop.cropVariety,
-          month: "January", // Replace with actual month if needed
-        }),
-      });
-      const data = await response.json();
-      console.log("API Response:", data); // <-- Log this
-      if (data.success) {
-        return {
-          minPrice: data.predictions.min_price || 0,
-          maxPrice: data.predictions.max_price || 0,
-          avgPrice: data.predictions.avg_price || 0,
-        };
-      }
-      return { minPrice: 0, maxPrice: 0, avgPrice: 0 };
-    } catch (error) {
-      console.error("Error fetching price predictions", error);
-      return { minPrice: 0, maxPrice: 0, avgPrice: 0 };
-    }
-  };
-
   const handleCropSubmit = async (e) => {
     e.preventDefault();
     if (!farmer) return;
@@ -117,23 +87,9 @@ const FarmerMarket = ({ farmerID }) => {
         await farmer.addCrop(crop);
       }
 
-      // Fetch price prediction for the crop
-      const { minPrice, maxPrice, avgPrice } = await fetchPricePrediction(crop);
-      crop.minPrice = minPrice;
-      crop.maxPrice = maxPrice;
-      crop.avgPrice = avgPrice;
-
-      // Update crop details with fetched prices
-      await farmer.updateCrop(crop);
-
       const fetchedCrops = await farmer.getCrops();
       setCrops(
-        fetchedCrops.map((crop) => ({
-          ...crop,
-          minPrice: crop.minPrice || 0,
-          maxPrice: crop.maxPrice || 0,
-          avgPrice: crop.avgPrice || 0,
-        }))
+        fetchedCrops
       );
       handleModalClose();
     } catch (error) {
