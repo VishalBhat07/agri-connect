@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   faSeedling,
@@ -10,10 +11,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAllFarmersCrops } from "../../../firebaseFunctions/cropFarmer";
-
+import { searchFarmerByCrop } from "../../../firebaseFunctions/cropFarmer";
 const MotionCard = motion.div;
 
 export default function ModernMarketplace() {
+  const navigate = useNavigate();
   const [crops, setCrops] = useState([]);
   const [selectedCrop, setSelectedCrop] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,6 +44,19 @@ export default function ModernMarketplace() {
     // Encode the location for use in the URL
     const encodedLocation = encodeURIComponent(location);
     return `https://www.google.com/maps/embed/v1/place?key=${API_KEY}&q=${encodedLocation},India`;
+  };
+
+  const handlePurchaseClick = async (crop) => {
+    try {
+      const farmer = await searchFarmerByCrop(crop);
+      if (farmer) {
+        navigate(`/profile/${farmer.farmerID}`);
+      } else {
+        console.error("No farmer found for this crop");
+      }
+    } catch (error) {
+      console.error("Error during purchase:", error);
+    }
   };
 
   const CropCard = ({ crop, index }) => (
@@ -151,6 +166,7 @@ export default function ModernMarketplace() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={()=>handlePurchaseClick(crop)}
                 className="w-full py-3 bg-gradient-to-r from-emerald-600 to-green-500 text-white rounded-lg font-medium text-lg"
               >
                 Purchase Now

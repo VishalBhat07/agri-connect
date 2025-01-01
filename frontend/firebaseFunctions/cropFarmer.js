@@ -224,3 +224,32 @@ export async function getAllFarmersCrops() {
     throw error;
   }
 }
+
+export async function searchFarmerByCrop(crop) {
+  try {
+    // Validate that input is a Crop object
+    if (!(crop instanceof Crop)) {
+      throw new Error("Input must be a Crop object");
+    }
+
+    // Get all farmers
+    const farmers = await getAllFarmers();
+    
+    // Find the farmer with the matching crop
+    for (const farmer of farmers) {
+      const crops = await farmer.getCrops();
+      const matchingCrop = crops.find(farmerCrop => farmerCrop.cropID === crop.cropID);
+      
+      if (matchingCrop) {
+        return farmer;
+      }
+    }
+    
+    // Return null if no match is found
+    return null;
+
+  } catch (error) {
+    console.error("Error searching farmer by crop:", error);
+    throw error;
+  }
+}
