@@ -7,6 +7,20 @@ import { FaUserCircle, FaBars, FaTimes } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const Logo = () => (
+  <div className="flex items-center space-x-2">
+    <img src={logo} alt="logo" className="h-8 w-auto" />
+    <div className="font-bold text-white flex">
+      <span className="text-red-500 text-3xl italic transform -skew-x-6">
+        Agri
+      </span>
+      <span className="text-green-500 text-3xl italic transform skew-x-6">
+        Connect
+      </span>
+    </div>
+  </div>
+);
+
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -18,16 +32,8 @@ const Navbar = () => {
       setUser(currentUser);
     });
 
-    const handleOutsideClick = (e) => {
-      if (!e.target.closest(".dropdown")) {
-        setDropdownVisible(false);
-      }
-    };
-    document.addEventListener("click", handleOutsideClick);
-
     return () => {
       unsubscribe();
-      document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
 
@@ -54,23 +60,19 @@ const Navbar = () => {
     { path: "/learn", label: "Learning Resources" },
     { path: "/schemes", label: "Government Schemes" },
     { path: "/about", label: "About us" },
-    { path: "/contact", label: "Contact us" }
+    { path: "/contact", label: "Contact us" },
   ];
 
   return (
     <nav className="bg-black shadow-lg">
-      <div className=" mx-auto px-4">
+      <div className="mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div 
-            className="flex items-center space-x-2 cursor-pointer" 
-            onClick={() => navigate("/")}
-          >
-            <img src={logo} alt="logo" className="h-8 w-auto" />
-            <span className="text-white font-bold text-lg">AgriConnect</span>
+          <div className="cursor-pointer" onClick={() => navigate("/")}>
+            <Logo />
           </div>
 
-          {/* Mobile menu button */}
+          {/* Rest of the navbar code remains the same */}
           <div className="md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -80,7 +82,6 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
@@ -93,31 +94,32 @@ const Navbar = () => {
             ))}
 
             {user ? (
-              <div className="relative dropdown">
-                <div
-                  className="flex items-center space-x-2 cursor-pointer text-white"
-                  onClick={() => setDropdownVisible(!dropdownVisible)}
-                >
+              <div
+                className="relative dropdown group"
+                onMouseEnter={() => setDropdownVisible(true)}
+                onMouseLeave={() => setDropdownVisible(false)}
+              >
+                <div className="flex items-center space-x-2 cursor-pointer text-white">
                   <FaUserCircle className="text-xl" />
                   <span>{getUsername(user.email)}</span>
                   <span className="ml-1">▼</span>
                 </div>
-                {dropdownVisible && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                    <button
-                      className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                      onClick={() => navigate(`/profile/${user.uid}`)}
-                    >
-                      My Profile
-                    </button>
-                    <button
-                      className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                      onClick={handleSignOut}
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                )}
+                <div
+                  className={`absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 transition-all duration-200 transform opacity-0 scale-95 origin-top-right pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto`}
+                >
+                  <button
+                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    onClick={() => navigate(`/profile/${user.uid}`)}
+                  >
+                    My Profile
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    onClick={handleSignOut}
+                  >
+                    Sign Out
+                  </button>
+                </div>
               </div>
             ) : (
               <button
@@ -146,7 +148,7 @@ const Navbar = () => {
                   {item.label}
                 </button>
               ))}
-              
+
               {user ? (
                 <>
                   <button
