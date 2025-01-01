@@ -50,7 +50,7 @@ export default function ModernMarketplace() {
     try {
       const farmer = await searchFarmerByCrop(crop);
       if (farmer) {
-        navigate(`/profile/${farmer.farmerID}`);
+        navigate(`/farmer/${farmer.farmerID}`);
       } else {
         console.error("No farmer found for this crop");
       }
@@ -166,7 +166,7 @@ export default function ModernMarketplace() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={()=>handlePurchaseClick(crop)}
+                onClick={() => handlePurchaseClick(crop)}
                 className="w-full py-3 bg-gradient-to-r from-emerald-600 to-green-500 text-white rounded-lg font-medium text-lg"
               >
                 Purchase Now

@@ -21,7 +21,7 @@ const Logo = () => (
   </div>
 );
 
-const Navbar = () => {
+const Navbar = ({ farmer }) => {
   const [user, setUser] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -109,7 +109,13 @@ const Navbar = () => {
                 >
                   <button
                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    onClick={() => navigate(`/profile/${user.uid}`)}
+                    onClick={() =>
+                      navigate(
+                        farmer
+                          ? `/profile/${farmer.farmerID}`
+                          : `/profile/${user.uid}`
+                      )
+                    }
                   >
                     My Profile
                   </button>

@@ -18,6 +18,7 @@ import LearningResourcesPage from "./pages/Learn/Learn";
 import { fetchFarmer } from "../firebaseFunctions/fetchUser";
 import FarmerMarket from "./pages/MarketPlace/FarmerMarket";
 import BuyerMarket from "./pages/MarketPlace/BuyerMarket";
+import PublicFarmerProfile from "./pages/Profile/PublicFarmerProfile";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -31,6 +32,7 @@ function App() {
         try {
           const fetchedFarmer = await fetchFarmer(user.email);
           setFarmer(fetchedFarmer);
+          console.log(fetchedFarmer.farmerID);
           setCurrentUser(user);
         } catch (error) {
           console.error("Error fetching farmer:", error);
@@ -64,8 +66,8 @@ function App() {
 
   return (
     <>
-      <Navbar />
-      <div>
+      <Navbar farmer={farmer} />
+      <div className="h-100vh">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/crophealth" element={<CropHealth />} />
@@ -88,6 +90,7 @@ function App() {
               )
             }
           />
+          <Route path="farmer/:farmerID" element={<PublicFarmerProfile />} />
         </Routes>
       </div>
       <Footer />
