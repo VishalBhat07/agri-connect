@@ -160,6 +160,106 @@ const FarmerMarket = ({ farmerID }) => {
     }
   };
 
+  function TableRow({ crop }) {
+    const [predictedPrices, setPredictedPrices] = useState({
+      minPrice: 0,
+      maxPrice: 0,
+      modalPrice: 0,
+    });
+    useEffect(() => {
+      // Extract district from location (assuming format like "District, State")
+      const getDistrict = (location) => {
+        if (!location) return "";
+        return location.split(",")[0].trim();
+      };
+
+      const fetchPrediction = async () => {
+        try {
+          const requestData = {
+            district: getDistrict(crop.cropLocation),
+            commodity: crop.cropName,
+            variety: crop.cropVariety,
+            month: new Date().toLocaleString("default", { month: "long" }), // Current month name
+          };
+
+          const response = await fetch("http://localhost:3000/predict", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            setPredictedPrices({
+              minPrice: data.predictions.min_price,
+              maxPrice: data.predictions.max_price,
+              modalPrice: data.predictions.modal_price,
+            });
+          } else {
+            console.error("Prediction failed:", data.error);
+          }
+        } catch (error) {
+          console.error("Error making prediction:", error);
+        }
+      };
+
+      fetchPrediction();
+    }, [crop]);
+
+    return (
+      <motion.tr
+        key={crop.cropID}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="hover:bg-gray-50"
+      >
+        <td className="px-6 py-4">{crop.cropName}</td>
+        <td className="px-6 py-4">{crop.cropVariety}</td>
+        <td className="px-6 py-4">₹{crop.cropPrice}</td>
+        <td className="px-6 py-4">
+          ₹{Math.floor(predictedPrices.minPrice)/100}
+        </td>
+        <td className="px-6 py-4">
+          ₹{Math.floor(predictedPrices.maxPrice)/100}
+        </td>
+        <td className="px-6 py-4">
+          ₹{Math.floor(predictedPrices.modalPrice)/100}
+        </td>
+
+        <td className="px-6 py-4">{crop.cropWeight} kg</td>
+        <td className="px-6 py-4">{crop.cropLocation}</td>
+        <td className="px-6 py-4">
+          <div className="flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => {
+                setEditingCrop(crop);
+                setCropData(crop);
+                setIsModalOpen(true);
+              }}
+              className="text-blue-600 hover:text-blue-800"
+            >
+              <FontAwesomeIcon icon={faPen} />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => deleteCrop(crop)}
+              className="text-red-600 hover:text-red-800"
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </motion.button>
+          </div>
+        </td>
+      </motion.tr>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="bg-white rounded-lg shadow-lg p-6">
@@ -205,47 +305,9 @@ const FarmerMarket = ({ farmerID }) => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {crops.map((crop) => (
-                <motion.tr
-                  key={crop.cropID}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="hover:bg-gray-50"
-                >
-                  <td className="px-6 py-4">{crop.cropName}</td>
-                  <td className="px-6 py-4">{crop.cropVariety}</td>
-                  <td className="px-6 py-4">₹{crop.cropPrice}</td>
-                  <td className="px-6 py-4">₹{crop.minPrice}</td>
-                  <td className="px-6 py-4">₹{crop.maxPrice}</td>
-                  <td className="px-6 py-4">₹{crop.avgPrice}</td>
-                  <td className="px-6 py-4">{crop.cropWeight} kg</td>
-                  <td className="px-6 py-4">{crop.cropLocation}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => {
-                          setEditingCrop(crop);
-                          setCropData(crop);
-                          setIsModalOpen(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <FontAwesomeIcon icon={faPen} />
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => deleteCrop(crop)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </motion.button>
-                    </div>
-                  </td>
-                </motion.tr>
+                <TableRow key={crop.cropID} crop={crop} />
               ))}
+
               <motion.tr
                 whileHover={{ backgroundColor: "rgba(0,0,0,0.02)" }}
                 className="cursor-pointer"
