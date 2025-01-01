@@ -111,4 +111,4 @@ def predict():
         }), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3000)  # Changed port to 3000 to match frontend
+    app.run()
