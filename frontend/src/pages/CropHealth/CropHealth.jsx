@@ -16,6 +16,8 @@ import "./CropHealth.css";
 
 const CropHealth = () => {
   const port = 5714;
+  const backendImageURL = "https://agri-ai-connect-backend.onrender.com/api/analyze-image";
+  const backendChatURL = "https://agri-ai-connect-backend.onrender.com/api/chat";
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState([]);
@@ -66,7 +68,7 @@ const CropHealth = () => {
 
     try {
       const response = await axios.post(
-        `https://agri-ai-connect-backend.onrender.com/api/analyze-image`,
+        `${backendImageURL}`,
         formData,
         {
           headers: {
@@ -82,7 +84,7 @@ const CropHealth = () => {
       setChatLog((prevLog) => [...prevLog, { user: "Bot", text: result }]);
       setImage(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Reset the file input
+        fileInputRef.current.value = "";
       }
     } catch (error) {
       console.error("Error analyzing the image:", error);
@@ -101,7 +103,7 @@ const CropHealth = () => {
 
     try {
       const response = await axios.post(
-        `https://agri-ai-connect-backend.onrender.com/api/chat`,
+        `${backendChatURL}`,
         { message: message },
         {
           headers: {
@@ -133,38 +135,36 @@ const CropHealth = () => {
   ];
 
   return (
-    <div className="w-full flex flex-col bg-gradient-to-br from-green-100 to-green-500">
-      {/* Main Content */}
-      <main className="min-h-[87vh] w-full px-6 py-6 flex flex-col">
-        <div className="w-full max-w-full mx-auto bg-white rounded-xl shadow-xl flex flex-col h-full overflow-hidden">
-          {/* Chat Log */}
+    <div className="h-full w-full flex flex-col bg-gradient-to-br from-green-100 to-green-500">
+      <main className="h-full w-full flex flex-col">
+        <div className="h-full w-full bg-white rounded-xl shadow-xl flex flex-col overflow-hidden">
           <div
             ref={chatLogRef}
-            className="min-h-[75vh] flex-grow overflow-y-auto bg-gray-50 border-b border-gray-200 p-4"
+            className="h-[85vh] overflow-y-auto bg-gray-50 border-b border-gray-200 p-2 sm:p-4"
           >
             {chatLog.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center pt-20">
-                <div className="mb-8 flex items-center justify-center w-32 h-32 bg-green-100 rounded-full shadow-lg">
+              <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                <div className="mb-6 flex items-center justify-center w-24 h-24 sm:w-32 sm:h-32 bg-green-100 rounded-full shadow-lg">
                   <FontAwesomeIcon
                     icon={faSeedling}
-                    className="text-6xl text-green-600 animate-pulse"
+                    className="text-4xl sm:text-6xl text-green-600 animate-pulse"
                   />
                 </div>
 
-                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center">
                   <FontAwesomeIcon
                     icon={faCommentDots}
-                    className="mr-3 text-green-600"
+                    className="mr-2 sm:mr-3 text-green-600"
                   />
                   Welcome to Plant Health Assistant
                 </h2>
 
-                <p className="text-lg text-gray-600 mb-6 max-w-md">
+                <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-md px-4">
                   Got plant questions? I'm here to help! Upload an image or ask
                   about plant health.
                 </p>
 
-                <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto w-full px-4">
                   {dummyPrompts.map((prompt, index) => (
                     <div
                       key={index}
@@ -191,37 +191,42 @@ const CropHealth = () => {
                 </div>
               </div>
             ) : (
-              chatLog.map((entry, index) => (
-                <div
-                  key={index}
-                  className={`flex w-full mb-4 ${
-                    entry.user === "You" ? "justify-end" : "justify-start"
-                  }`}
-                >
+              <div className="space-y-4">
+                {chatLog.map((entry, index) => (
                   <div
-                    className={`p-4 rounded-lg shadow-sm
-                      ${
-                        entry.user === "You"
-                          ? "chat-message-right bg-green-100 text-green-900 self-end"
-                          : "chat-message-left bg-gray-200 text-gray-900 self-start min-w-[50%]"
-                      }`}
+                    key={index}
+                    className={`flex w-full ${
+                      entry.user === "You" ? "justify-end" : "justify-start"
+                    }`}
                   >
-                    <div className="flex items-center mb-2">
-                      <FontAwesomeIcon
-                        icon={entry.user === "You" ? faSeedling : faLeaf}
-                        className={`mr-2 ${
+                    <div
+                      className={`p-3 sm:p-4 rounded-lg shadow-sm max-w-[85%] sm:max-w-[75%] break-words
+                        ${
                           entry.user === "You"
-                            ? "text-green-600"
-                            : "text-gray-600"
+                            ? "chat-message-right bg-green-100 text-green-900"
+                            : "chat-message-left bg-gray-200 text-gray-900"
                         }`}
-                      />
-                      <strong className="font-semibold">{entry.user}</strong>
+                    >
+                      <div className="flex items-center mb-2">
+                        <FontAwesomeIcon
+                          icon={entry.user === "You" ? faSeedling : faLeaf}
+                          className={`mr-2 ${
+                            entry.user === "You"
+                              ? "text-green-600"
+                              : "text-gray-600"
+                          }`}
+                        />
+                        <strong className="font-semibold text-sm sm:text-base">
+                          {entry.user}
+                        </strong>
+                      </div>
+                      <div className="text-sm sm:text-base">
+                        <ReactMarkdown>{entry.text}</ReactMarkdown>
+                      </div>
                     </div>
-                    {/* Here we render markdown */}
-                    <ReactMarkdown>{entry.text}</ReactMarkdown>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
 
             {loading && (
@@ -231,14 +236,15 @@ const CropHealth = () => {
             )}
           </div>
 
-          {/* Input Section */}
-          <div className="flex items-center gap-3 p-4 bg-white border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 p-2 sm:p-4 bg-white border-t border-gray-200">
             <label
               htmlFor="image-upload"
-              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md cursor-pointer hover:bg-green-700 transition"
+              className="flex items-center justify-center px-3 py-2 bg-green-600 text-white rounded-md cursor-pointer hover:bg-green-700 transition"
             >
               <FontAwesomeIcon icon={faUpload} className="mr-2" />
-              {image ? image.name : "Upload Image"}
+              <span className="truncate max-w-[150px]">
+                {image ? image.name : "Upload Image"}
+              </span>
               <input
                 ref={fileInputRef}
                 id="image-upload"
@@ -248,27 +254,30 @@ const CropHealth = () => {
                 onChange={handleImageUpload}
               />
             </label>
-            <input
-              type="text"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Ask something about plant health..."
-              className="flex-grow px-3 py-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-            />
-            <button
-              onClick={analyzeImage}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition disabled:opacity-50"
-              disabled={!image || imageLoading}
-            >
-              Analyze
-            </button>
-            <button
-              onClick={sendMessage}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition flex items-center"
-            >
-              <FontAwesomeIcon icon={faPaperPlane} className="mr-2" /> Send
-            </button>
+            <div className="flex-1 flex gap-2">
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Ask something about plant health..."
+                className="flex-grow px-3 py-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+              />
+              <button
+                onClick={analyzeImage}
+                className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition disabled:opacity-50 whitespace-nowrap"
+                disabled={!image || imageLoading}
+              >
+                Analyze
+              </button>
+              <button
+                onClick={sendMessage}
+                className="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition flex items-center justify-center whitespace-nowrap"
+              >
+                <FontAwesomeIcon icon={faPaperPlane} className="mr-2" />
+                <span className="hidden sm:inline">Send</span>
+              </button>
+            </div>
           </div>
         </div>
       </main>
