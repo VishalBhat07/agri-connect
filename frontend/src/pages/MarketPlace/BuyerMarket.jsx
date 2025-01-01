@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 import {
   faSeedling,
   faLocationDot,
@@ -12,6 +13,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAllFarmersCrops } from "../../../firebaseFunctions/cropFarmer";
 import { searchFarmerByCrop } from "../../../firebaseFunctions/cropFarmer";
+
 const MotionCard = motion.div;
 
 export default function ModernMarketplace() {
@@ -20,16 +22,52 @@ export default function ModernMarketplace() {
   const [selectedCrop, setSelectedCrop] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
+  const [cropImages, setCropImages] = useState({}); // Store images for each crop by cropID
   const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const UNSPLASH_API_KEY = import.meta.env.VITE_UNSPLASH_API_KEY;
 
   useEffect(() => {
     const fetchCrops = async () => {
-      const farmersWithCrops = await getAllFarmersCrops();
-      const allCrops = farmersWithCrops.flatMap(({ crops }) => crops);
-      setCrops(allCrops);
+      try {
+        const farmersWithCrops = await getAllFarmersCrops();
+        const allCrops = farmersWithCrops.flatMap(({ crops }) => crops);
+        setCrops(allCrops);
+      } catch (error) {
+        console.error("Error fetching crops", error);
+      }
     };
     fetchCrops();
   }, []);
+
+  const fetchCropImage = async (cropID, cropName) => {
+    if (cropImages[cropID]) return; // Skip if image already fetched
+    try {
+      console.log(cropName);
+      const response = await axios.get(
+        `https://api.unsplash.com/search/photos`,
+        {
+          params: {
+            query: cropName,
+            client_id: UNSPLASH_API_KEY,
+            per_page: 1,
+          },
+        }
+      );
+      if (response.data.results.length > 0) {
+        setCropImages((prevImages) => ({
+          ...prevImages,
+          [cropID]: response.data.results[0].urls.small,
+        }));
+      } else {
+        setCropImages((prevImages) => ({
+          ...prevImages,
+          [cropID]: "",
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching crop image from Unsplash", error);
+    }
+  };
 
   const filteredCrops = crops.filter((crop) => {
     const search = searchTerm.toLowerCase();
@@ -41,7 +79,6 @@ export default function ModernMarketplace() {
   });
 
   const getMapUrl = (location) => {
-    // Encode the location for use in the URL
     const encodedLocation = encodeURIComponent(location);
     return `https://www.google.com/maps/embed/v1/place?key=${API_KEY}&q=${encodedLocation},India`;
   };
@@ -59,61 +96,78 @@ export default function ModernMarketplace() {
     }
   };
 
-  const CropCard = ({ crop, index }) => (
-    <MotionCard
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      whileHover={{
-        scale: 1.02,
-        rotateY: 5,
-        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-      }}
-      className="bg-white rounded-xl overflow-hidden transform-gpu"
-    >
-      <motion.div
-        className="h-48 bg-gradient-to-br from-green-400 to-emerald-600 relative"
-        whileHover={{ scale: 1.05 }}
+  const CropCard = ({ crop, index }) => {
+    useEffect(() => {
+      fetchCropImage(crop.cropID, crop.cropName);
+    }, [crop.cropID, crop.cropName]);
+
+    return (
+      <MotionCard
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.3, delay: index * 0.1 }}
+        whileHover={{
+          scale: 1.02,
+          rotateY: 5,
+          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+        }}
+        className="bg-white rounded-xl overflow-hidden transform-gpu"
       >
-        <FontAwesomeIcon
-          icon={faSeedling}
-          className="absolute inset-0 m-auto text-white/20 w-24 h-24"
-        />
-        <div className="absolute bottom-0 left-0 right-0 bg-black/30 backdrop-blur-sm p-4">
-          <h3 className="text-xl font-bold text-white">{crop.cropName}</h3>
-          <p className="text-white/90">{crop.cropVariety}</p>
-        </div>
-      </motion.div>
-
-      <div className="p-4 space-y-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-2 text-gray-600">
-            <FontAwesomeIcon icon={faWeightScale} />
-            <span>{crop.cropWeight}kg</span>
+        <motion.div
+          className="h-48 bg-gradient-to-br from-green-400 to-emerald-600 relative"
+          whileHover={{ scale: 1.05 }}
+        >
+          <FontAwesomeIcon
+            icon={faSeedling}
+            className="absolute inset-0 m-auto text-white/20 w-24 h-24"
+          />
+          {cropImages[crop.cropID] ? (
+            <img
+              src={cropImages[crop.cropID]}
+              alt={crop.cropName}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-lg">
+              No Image Available
+            </div>
+          )}
+          <div className="absolute bottom-0 left-0 right-0 bg-black/30 backdrop-blur-sm p-4">
+            <h3 className="text-xl font-bold text-white">{crop.cropName}</h3>
+            <p className="text-white/90">{crop.cropVariety}</p>
           </div>
-          <div className="flex items-center space-x-2 text-gray-600">
-            <FontAwesomeIcon icon={faLocationDot} />
-            <span>{crop.cropLocation}</span>
+        </motion.div>
+
+        <div className="p-4 space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2 text-gray-600">
+              <FontAwesomeIcon icon={faWeightScale} />
+              <span>{crop.cropWeight}kg</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-600">
+              <FontAwesomeIcon icon={faLocationDot} />
+              <span>{crop.cropLocation}</span>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <p className="text-2xl font-bold text-emerald-600">
+              Rs. {crop.cropPrice}
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedCrop(crop)}
+              className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium"
+            >
+              View Details
+            </motion.button>
           </div>
         </div>
-
-        <div className="flex justify-between items-center">
-          <p className="text-2xl font-bold text-emerald-600">
-            Rs. {crop.cropPrice}
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setSelectedCrop(crop)}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium"
-          >
-            View Details
-          </motion.button>
-        </div>
-      </div>
-    </MotionCard>
-  );
+      </MotionCard>
+    );
+  };
 
   const CropModal = ({ crop }) => (
     <AnimatePresence>
