@@ -147,12 +147,13 @@ const FarmerMarket = ({ farmerID }) => {
           });
 
           const data = await response.json();
+          console.log(data);
 
           if (data.success) {
             setPredictedPrices({
-              minPrice: data.predictions.min_price,
-              maxPrice: data.predictions.max_price,
-              modalPrice: data.predictions.modal_price,
+              minPrice: data.predictions.predictions.min_price,
+              maxPrice: data.predictions.predictions.max_price,
+              modalPrice: data.predictions.predictions.modal_price,
             });
           } else {
             console.error("Prediction failed:", data.error);
