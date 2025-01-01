@@ -1,99 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
   faPen,
   faTrash,
-  faTimes,
-  faCheck,
   faLeaf,
 } from "@fortawesome/free-solid-svg-icons";
 import { Farmer, Crop } from "../../../firebaseFunctions/cropFarmer";
-
-const Modal = ({
-  isModalOpen,
-  onClose,
-  onSubmit,
-  cropData,
-  setCropData,
-  editingCrop,
-}) => (
-  <AnimatePresence>
-    {isModalOpen && (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-lg p-6 w-full max-w-md"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">
-              {editingCrop ? "Edit Crop" : "Add New Crop"}
-            </h2>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <FontAwesomeIcon icon={faTimes} />
-            </button>
-          </div>
-
-          <form onSubmit={onSubmit} className="space-y-4">
-            {[
-              { name: "cropName", label: "Crop Name" },
-              { name: "cropVariety", label: "Variety" },
-              { name: "cropPrice", label: "Price per kg", type: "number" },
-              { name: "cropWeight", label: "Weight in kg", type: "number" },
-              { name: "cropLocation", label: "Location" },
-            ].map(({ name, label, type }) => (
-              <input
-                key={name}
-                type={type || "text"}
-                name={name}
-                placeholder={label}
-                value={cropData[name]}
-                onChange={(e) =>
-                  setCropData((prev) => ({
-                    ...prev,
-                    [e.target.name]: e.target.value,
-                  }))
-                }
-                className="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                required
-                {...(type === "number" ? { min: "0", step: "0.01" } : {})}
-              />
-            ))}
-
-            <div className="flex justify-end gap-2 mt-6">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                {editingCrop ? "Save Changes" : "Add Crop"}
-              </button>
-            </div>
-          </form>
-        </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
+import Modal from "./Modal"; // Import the Modal component
 
 const FarmerMarket = ({ farmerID }) => {
   const [farmer, setFarmer] = useState(null);
@@ -124,7 +39,14 @@ const FarmerMarket = ({ farmerID }) => {
       if (!farmer) return;
       try {
         const fetchedCrops = await farmer.getCrops();
-        setCrops(fetchedCrops || []);
+        setCrops(
+          fetchedCrops.map((crop) => ({
+            ...crop,
+            minPrice: crop.minPrice || 0,
+            maxPrice: crop.maxPrice || 0,
+            avgPrice: crop.avgPrice || 0,
+          }))
+        );
       } catch (error) {
         console.error("Error fetching farmer crops", error);
       }
@@ -145,34 +67,74 @@ const FarmerMarket = ({ farmerID }) => {
     });
   };
 
+  const fetchPricePrediction = async (crop) => {
+    try {
+      const response = await fetch("http://localhost:3000/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          district: crop.cropLocation,
+          commodity: crop.cropName,
+          variety: crop.cropVariety,
+          month: "January", // Replace with actual month if needed
+        }),
+      });
+      const data = await response.json();
+      console.log("API Response:", data); // <-- Log this
+      if (data.success) {
+        return {
+          minPrice: data.predictions.min_price || 0,
+          maxPrice: data.predictions.max_price || 0,
+          avgPrice: data.predictions.avg_price || 0,
+        };
+      }
+      return { minPrice: 0, maxPrice: 0, avgPrice: 0 };
+    } catch (error) {
+      console.error("Error fetching price predictions", error);
+      return { minPrice: 0, maxPrice: 0, avgPrice: 0 };
+    }
+  };
+
   const handleCropSubmit = async (e) => {
     e.preventDefault();
     if (!farmer) return;
 
     try {
+      const crop = new Crop(
+        cropData.cropName,
+        cropData.cropVariety,
+        parseFloat(cropData.cropPrice),
+        parseFloat(cropData.cropWeight),
+        cropData.cropLocation
+      );
+
       if (editingCrop) {
-        const updatedCrop = new Crop(
-          cropData.cropName,
-          cropData.cropVariety,
-          parseFloat(cropData.cropPrice),
-          parseFloat(cropData.cropWeight),
-          cropData.cropLocation
-        );
-        updatedCrop.cropID = editingCrop.cropID;
-        await farmer.updateCrop(updatedCrop);
+        crop.cropID = editingCrop.cropID;
+        await farmer.updateCrop(crop);
       } else {
-        const newCrop = new Crop(
-          cropData.cropName,
-          cropData.cropVariety,
-          parseFloat(cropData.cropPrice),
-          parseFloat(cropData.cropWeight),
-          cropData.cropLocation
-        );
-        await farmer.addCrop(newCrop);
+        await farmer.addCrop(crop);
       }
 
+      // Fetch price prediction for the crop
+      const { minPrice, maxPrice, avgPrice } = await fetchPricePrediction(crop);
+      crop.minPrice = minPrice;
+      crop.maxPrice = maxPrice;
+      crop.avgPrice = avgPrice;
+
+      // Update crop details with fetched prices
+      await farmer.updateCrop(crop);
+
       const fetchedCrops = await farmer.getCrops();
-      setCrops(fetchedCrops || []);
+      setCrops(
+        fetchedCrops.map((crop) => ({
+          ...crop,
+          minPrice: crop.minPrice || 0,
+          maxPrice: crop.maxPrice || 0,
+          avgPrice: crop.avgPrice || 0,
+        }))
+      );
       handleModalClose();
     } catch (error) {
       console.error("Error saving crop:", error);
@@ -185,7 +147,14 @@ const FarmerMarket = ({ farmerID }) => {
     try {
       await farmer.deleteCrop(crop.cropID);
       const fetchedCrops = await farmer.getCrops();
-      setCrops(fetchedCrops || []);
+      setCrops(
+        fetchedCrops.map((crop) => ({
+          ...crop,
+          minPrice: crop.minPrice || 0,
+          maxPrice: crop.maxPrice || 0,
+          avgPrice: crop.avgPrice || 0,
+        }))
+      );
     } catch (error) {
       console.error("Error deleting crop:", error);
     }
@@ -215,6 +184,15 @@ const FarmerMarket = ({ farmerID }) => {
                   Price/kg
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Min Price
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Max Price
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Avg Price
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Weight
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -237,6 +215,9 @@ const FarmerMarket = ({ farmerID }) => {
                   <td className="px-6 py-4">{crop.cropName}</td>
                   <td className="px-6 py-4">{crop.cropVariety}</td>
                   <td className="px-6 py-4">₹{crop.cropPrice}</td>
+                  <td className="px-6 py-4">₹{crop.minPrice}</td>
+                  <td className="px-6 py-4">₹{crop.maxPrice}</td>
+                  <td className="px-6 py-4">₹{crop.avgPrice}</td>
                   <td className="px-6 py-4">{crop.cropWeight} kg</td>
                   <td className="px-6 py-4">{crop.cropLocation}</td>
                   <td className="px-6 py-4">
@@ -270,7 +251,7 @@ const FarmerMarket = ({ farmerID }) => {
                 className="cursor-pointer"
                 onClick={() => setIsModalOpen(true)}
               >
-                <td colSpan="6" className="px-6 py-4">
+                <td colSpan="9" className="px-6 py-4">
                   <div className="flex justify-center items-center text-green-600 hover:text-green-700">
                     <FontAwesomeIcon icon={faPlus} className="mr-2" />
                     Add New Crop
