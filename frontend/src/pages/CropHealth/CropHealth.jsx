@@ -66,7 +66,7 @@ const CropHealth = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:${port}/api/analyze-image`,
+        `https://agri-ai-connect-backend.onrender.com/api/analyze-image`,
         formData,
         {
           headers: {
@@ -101,7 +101,7 @@ const CropHealth = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:${port}/api/chat`,
+        `https://agri-ai-connect-backend.onrender.com/api/chat`,
         { message: message },
         {
           headers: {
