@@ -19,6 +19,7 @@ import { fetchFarmer } from "../firebaseFunctions/fetchUser";
 import FarmerMarket from "./pages/MarketPlace/FarmerMarket";
 import BuyerMarket from "./pages/MarketPlace/BuyerMarket";
 import PublicFarmerProfile from "./pages/Profile/PublicFarmerProfile";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop"; // Import ScrollToTop
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -68,6 +69,8 @@ function App() {
     <>
       <Navbar farmer={farmer} />
       <div className="h-100vh">
+        {/* Integrate ScrollToTop */}
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/crophealth" element={<CropHealth />} />

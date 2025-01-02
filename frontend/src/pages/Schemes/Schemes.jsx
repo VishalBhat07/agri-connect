@@ -11,6 +11,7 @@ const schemes = [
     benefits:
       "₹6,000 annually, paid in three equal installments, directly to the bank account of the farmer.",
     color: "from-green-400 to-emerald-600",
+    link: "https://pmkisan.gov.in/", // Link to PM-KISAN official site
   },
   {
     name: "National Mission on Agricultural Extension and Technology",
@@ -21,6 +22,7 @@ const schemes = [
     benefits:
       "Training on advanced farming techniques, provision of subsidies for adopting new technologies.",
     color: "from-teal-400 to-green-600",
+    link: "https://www.agricoop.nic.in/en/schemes/national-mission-agricultural-extension-and-technology", // Link to official site
   },
   {
     name: "Fasal Bima Yojana",
@@ -31,6 +33,7 @@ const schemes = [
     benefits:
       "Coverage for crop losses, with a minimal premium contribution from the farmer, especially in disaster-hit areas.",
     color: "from-emerald-400 to-teal-600",
+    link: "https://pmfby.gov.in/", // Link to Fasal Bima Yojana official site
   },
   {
     name: "Soil Health Management Scheme",
@@ -41,6 +44,7 @@ const schemes = [
     benefits:
       "Free soil testing and recommendations on crop rotation, fertilizers, and other practices to improve soil health.",
     color: "from-green-500 to-emerald-700",
+    link: "https://www.agricoop.nic.in/en/schemes/soil-health-management", // Link to official site
   },
   {
     name: "Pradhan Mantri Fasal Bima Yojana",
@@ -50,6 +54,7 @@ const schemes = [
     benefits:
       "Premium coverage for crops, reduced premiums for farmers in disaster-prone areas.",
     color: "from-teal-500 to-green-700",
+    link: "https://pmfby.gov.in/", // Link to PMFBY official site
   },
   {
     name: "Rashtriya Krishi Vikas Yojana",
@@ -60,6 +65,7 @@ const schemes = [
     benefits:
       "Infrastructure development, technology upgrades, and more accessible resources for farmers.",
     color: "from-emerald-500 to-teal-700",
+    link: "https://www.agricoop.nic.in/en/schemes/rashtriya-krishi-vikas-yojana", // Link to official site
   },
 ];
 
@@ -69,7 +75,7 @@ const SchemeCard = ({ scheme, index }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ scale: 1.02, rotateY: 5, z: 50 }}
+      whileHover={{ scale: 1.02, rotateY: 5, zIndex: 50 }}
       className="w-full"
     >
       <div className="h-full rounded-2xl shadow-xl overflow-hidden transform-gpu">
@@ -111,6 +117,7 @@ const SchemeCard = ({ scheme, index }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-full mt-6 px-6 py-3 bg-white text-green-700 rounded-lg font-semibold hover:bg-green-50 transition-colors"
+              onClick={() => window.open(scheme.link, "_blank")} // Opens scheme link in a new tab
             >
               Apply Now
             </motion.button>

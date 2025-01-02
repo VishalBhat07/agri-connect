@@ -9,6 +9,7 @@ import {
   faLandmark,
   faAddressBook,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import "./Footer.css";
 
 const Footer = () => {
@@ -41,19 +42,19 @@ const Footer = () => {
           <ul className="quick-links">
             <li>
               <FontAwesomeIcon icon={faStore} className="link-icon" />
-              <span>Market Place</span>
+              <Link to="/marketplace">Market Place</Link>
             </li>
             <li>
               <FontAwesomeIcon icon={faBook} className="link-icon" />
-              <span>Learning Resources</span>
+              <Link to="/learn">Learning Resources</Link>
             </li>
             <li>
               <FontAwesomeIcon icon={faLandmark} className="link-icon" />
-              <span>Government Schemes</span>
+              <Link to="/schemes">Government Schemes</Link>
             </li>
             <li>
               <FontAwesomeIcon icon={faAddressBook} className="link-icon" />
-              <span>Contact Us</span>
+              <Link to="/contact">Contact Us</Link>
             </li>
           </ul>
         </div>

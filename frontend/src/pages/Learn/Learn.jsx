@@ -16,6 +16,7 @@ const resources = [
     ],
     level: "Beginner",
     color: "from-blue-400 to-cyan-600",
+    link: "https://www.coursera.org/learn/crop-management-fundamentals", // Link to a course on Coursera
   },
   {
     title: "Sustainable Farming Practices",
@@ -31,6 +32,7 @@ const resources = [
     ],
     level: "Intermediate",
     color: "from-teal-400 to-green-600",
+    link: "https://www.edx.org/course/sustainable-farming-practices", // Link to a course on edX
   },
   {
     title: "Modern Agricultural Technology",
@@ -46,6 +48,7 @@ const resources = [
     ],
     level: "Advanced",
     color: "from-indigo-400 to-blue-600",
+    link: "https://www.futurelearn.com/courses/modern-agricultural-technology", // Link to a course on FutureLearn
   },
   {
     title: "Financial Management for Farmers",
@@ -61,6 +64,7 @@ const resources = [
     ],
     level: "Beginner",
     color: "from-purple-400 to-indigo-600",
+    link: "https://www.udemy.com/course/financial-management-for-farmers/", // Link to a course on Udemy
   },
   {
     title: "Agricultural Marketing Skills",
@@ -76,6 +80,7 @@ const resources = [
     ],
     level: "Intermediate",
     color: "from-cyan-400 to-blue-600",
+    link: "https://www.agriculture.gov.au/ag-farm-food/agricultural-marketing-skills", // Link to an Australian government resource
   },
   {
     title: "Climate-Smart Agriculture",
@@ -91,6 +96,7 @@ const resources = [
     ],
     level: "Advanced",
     color: "from-green-400 to-teal-600",
+    link: "https://www.coursera.org/learn/climate-smart-agriculture", // Link to a course on Coursera
   },
 ];
 
@@ -100,7 +106,7 @@ const ResourceCard = ({ resource, index }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ scale: 1.02, rotateY: 5, z: 50 }}
+      whileHover={{ scale: 1.02, rotateY: 5, zIndex: 50 }}
       className="w-full"
     >
       <div className="h-full rounded-2xl shadow-xl overflow-hidden transform-gpu">
@@ -151,6 +157,7 @@ const ResourceCard = ({ resource, index }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="flex-1 px-6 py-3 bg-white text-blue-700 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+                onClick={() => window.open(resource.link, "_blank")} // Opens course link in a new tab
               >
                 Start Learning
               </motion.button>
@@ -183,7 +190,7 @@ const LearningResourcesPage = () => {
           </h1>
           <p className="text-xl text-blue-700">
             Enhance your agricultural knowledge with our comprehensive learning
-            materials
+            materials.
           </p>
         </div>
 

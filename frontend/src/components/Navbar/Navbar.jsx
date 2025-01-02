@@ -7,6 +7,7 @@ import { FaUserCircle, FaBars, FaTimes } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Logo component remains the same
 const Logo = () => (
   <div className="flex items-center space-x-2">
     <img src={logo} alt="logo" className="h-8 w-auto" />
@@ -32,10 +33,29 @@ const Navbar = ({ farmer }) => {
       setUser(currentUser);
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
+
+  // Add a small delay before closing the dropdown to give time to move to the menu
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setDropdownVisible(false);
+    }, 100);
+
+    // Store the timeout ID in a data attribute to clear it if needed
+    document.querySelector(".dropdown")?.setAttribute("data-timeout", timeout);
+  };
+
+  // Clear the timeout if we re-enter the dropdown area
+  const handleMouseEnter = () => {
+    const timeout = document
+      .querySelector(".dropdown")
+      ?.getAttribute("data-timeout");
+    if (timeout) {
+      clearTimeout(Number(timeout));
+    }
+    setDropdownVisible(true);
+  };
 
   const handleSignOut = async () => {
     try {
@@ -67,12 +87,10 @@ const Navbar = ({ farmer }) => {
     <nav className="bg-black shadow-lg">
       <div className="mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <div className="cursor-pointer" onClick={() => navigate("/")}>
             <Logo />
           </div>
 
-          {/* Rest of the navbar code remains the same */}
           <div className="md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -95,37 +113,42 @@ const Navbar = ({ farmer }) => {
 
             {user ? (
               <div
-                className="relative dropdown group"
-                onMouseEnter={() => setDropdownVisible(true)}
-                onMouseLeave={() => setDropdownVisible(false)}
+                className="relative dropdown"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               >
                 <div className="flex items-center space-x-2 cursor-pointer text-white">
                   <FaUserCircle className="text-xl" />
                   <span>{getUsername(user.email)}</span>
                   <span className="ml-1">▼</span>
                 </div>
-                <div
-                  className={`absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 transition-all duration-200 transform opacity-0 scale-95 origin-top-right pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto`}
-                >
-                  <button
-                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    onClick={() =>
-                      navigate(
-                        farmer
-                          ? `/profile/${farmer.farmerID}`
-                          : `/profile/${user.uid}`
-                      )
-                    }
-                  >
-                    My Profile
-                  </button>
-                  <button
-                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    onClick={handleSignOut}
-                  >
-                    Sign Out
-                  </button>
-                </div>
+
+                {/* Added a pseudo-element to bridge the gap */}
+                {dropdownVisible && (
+                  <>
+                    <div className="absolute -bottom-2 left-0 right-0 h-2 bg-transparent" />
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                      <button
+                        className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={() =>
+                          navigate(
+                            farmer
+                              ? `/profile/${farmer.farmerID}`
+                              : `/profile/${user.uid}`
+                          )
+                        }
+                      >
+                        My Profile
+                      </button>
+                      <button
+                        className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={handleSignOut}
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <button

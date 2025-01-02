@@ -83,8 +83,8 @@ const Right = () => (
         {[
           { icon: faSeedling, text: "Buy and sell crops easily" },
           { icon: faLightbulb, text: "Learn modern farming techniques" },
-          { icon: faSun, text: "Access real-time weather updates" },
-          { icon: faLeaf, text: "Analyze crop price trends" },
+          { icon: faSun, text: "Access our own chatbot" },
+          { icon: faLeaf, text: "Analyze crop prices" },
           { icon: faPaperPlane, text: "Get notified about government schemes" },
         ].map((feature, index) => (
           <li
@@ -164,10 +164,10 @@ const Features = () => (
             "Real-time crop price analytics and market trends to help you make informed decisions.",
         },
         {
-          icon: faCloud,
-          title: "Weather Forecasts",
+          icon: faLightbulb,
+          title: "Chat Bot",
           description:
-            "Accurate weather predictions and agricultural advisories for better crop planning.",
+            "Your own chatbot for agricultural advisories and better crop planning.",
         },
         {
           icon: faNewspaper,

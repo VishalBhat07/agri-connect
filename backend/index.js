@@ -48,7 +48,8 @@ app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
           mimeType: file.mimetype,
         },
       },
-      "1. Identify the plant in the image \
+      "0. Provide answers assuming I am farmer with no knowledge\
+       1. Identify the plant in the image \
        2. Provide description and name of the diseases if any \
        3. Provide prevention, cure for the disease if any \
        4. Common areas and locations where this disease is found \
