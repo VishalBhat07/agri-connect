@@ -16,19 +16,11 @@ import "./About.css";
 const teamInfo = [
   {
     name: "Vishal K Bhat",
-    role: "Team leader",
+    role: "Developement",
   },
   {
-    name: "V S Sreenivaas",
-    role: "Member",
-  },
-  {
-    name: "Sumukh S Raikar",
-    role: "Member",
-  },
-  {
-    name: "Siddharth Thotada",
-    role: "Member",
+    name: "Yeshas Raju",
+    role: "Machine learning",
   },
 ];
 

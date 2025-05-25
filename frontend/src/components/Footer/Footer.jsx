@@ -75,8 +75,8 @@ const Footer = () => {
             </p>
             <p className="contact-item">
               <FontAwesomeIcon icon={faEnvelope} className="contact-icon" />
-              <a href="mailto:vssreenivaas@agriconnect.com">
-                vssreenivaas@agriconnect.com
+              <a href="mailto:yeshasraju@agriconnect.com">
+                yeshasraju@agriconnect.com
               </a>
             </p>
             <p className="contact-item">

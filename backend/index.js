@@ -6,7 +6,7 @@ import cors from "cors";
 
 dotenv.config();
 const app = express();
-const port = process.env.port || 5714;
+const port = process.env.PORT || 5714;
 
 app.use(
   cors({
@@ -19,7 +19,7 @@ app.use(express.json());
 
 // Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-pro" });
+const model = genAI.getGenerativeModel({ model: "models/gemini-2.0-flash" });
 
 // Configure multer for image upload
 const upload = multer({ storage: multer.memoryStorage() });
@@ -70,6 +70,8 @@ app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
 app.post("/api/chat", async (req, res) => {
   try {
     const { message } = req.body;
+
+    console.log(message);
 
     if (!message) {
       return res.status(400).json({ error: "No message provided!" });

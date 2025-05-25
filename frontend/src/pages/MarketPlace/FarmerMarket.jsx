@@ -88,9 +88,7 @@ const FarmerMarket = ({ farmerID }) => {
       }
 
       const fetchedCrops = await farmer.getCrops();
-      setCrops(
-        fetchedCrops
-      );
+      setCrops(fetchedCrops);
       handleModalClose();
     } catch (error) {
       console.error("Error saving crop:", error);
@@ -138,7 +136,7 @@ const FarmerMarket = ({ farmerID }) => {
             month: new Date().toLocaleString("default", { month: "long" }), // Current month name
           };
 
-          const response = await fetch("http://localhost:3000/predict", {
+          const response = await fetch("http://localhost:5174/predict", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -151,9 +149,9 @@ const FarmerMarket = ({ farmerID }) => {
 
           if (data.success) {
             setPredictedPrices({
-              minPrice: data.predictions.predictions.min_price,
-              maxPrice: data.predictions.predictions.max_price,
-              modalPrice: data.predictions.predictions.modal_price,
+              minPrice: data.predictions.min_price,
+              maxPrice: data.predictions.max_price,
+              modalPrice: data.predictions.modal_price,
             });
           } else {
             console.error("Prediction failed:", data.error);
@@ -178,13 +176,13 @@ const FarmerMarket = ({ farmerID }) => {
         <td className="px-6 py-4">{crop.cropVariety}</td>
         <td className="px-6 py-4">₹{crop.cropPrice}</td>
         <td className="px-6 py-4">
-          ₹{Math.floor(predictedPrices.minPrice)/100}
+          ₹{Math.floor(predictedPrices.minPrice) / 100}
         </td>
         <td className="px-6 py-4">
-          ₹{Math.floor(predictedPrices.maxPrice)/100}
+          ₹{Math.floor(predictedPrices.maxPrice) / 100}
         </td>
         <td className="px-6 py-4">
-          ₹{Math.floor(predictedPrices.modalPrice)/100}
+          ₹{Math.floor(predictedPrices.modalPrice) / 100}
         </td>
 
         <td className="px-6 py-4">{crop.cropWeight} kg</td>
